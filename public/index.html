@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html>
+<head>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+<style>
+	body {
+		background-image: url("background.png");
+	}
+
+	.container {
+		margin-top:50px;
+	}
+
+</style>
+<script src="script.js"></script>
+
+</head>
+
+<body>
+	<div class="container" ng-app="myApp" ng-controller="formCtrl">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<h4 class="text-center">Stock Market Search</h4>
+
+				<form name="myForm" novalidate>
+					<div class="row">
+						<div class="col-md-3">	  
+							<label for="symbol">Enter Stock Ticker Symbol: *</label>
+						</div>
+						<div class="col-md-5">
+							<input id="search-symbol" name="symbol" ng-model="symbol" type="search" class="form-control" placeholder="e.g. AAPL" required my-directive>	
+						  <p ng-show="myForm.symbol.$invalid && myForm.symbol.$touched" class="help-block">Please enter a stock ticker symbol.</p>
+							<h1>{{myForm.symbol.$valid}}</h1>
+
+						</div>
+						<div class="col-md-4">
+							<button type="button" class="btn btn-primary" ng-disabled="myForm.$invalid" type="submit">
+								<span class="glyphicon glyphicon-search"></span> Get Quote
+							</button>
+							<button id="search-clear" type="button" class="btn btn-secondary">
+								<span class="glyphicon glyphicon-remove"></span> Clear
+							</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+		<hr>
+
+		<div class="panel panel-default">
+			<div class="panel-body">
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>
