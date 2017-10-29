@@ -22,6 +22,16 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
 <style>
+	html, body {
+	    position: fixed;
+	    top: 0; 
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+	    margin: 0;
+	    padding: 0;
+	    height: 100%;
+	}
 	body {
 		background-image: url("http://cs-server.usc.edu:45678/hw/hw8/images/background.png");
 	}
@@ -40,8 +50,8 @@
 </script>
 </head>
 
-<body ng-app="myApp">
-	<div class="container" ng-controller="formCtrl">
+<body >
+	<div class="container" ng-app="myApp" ng-controller="formCtrl">
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<h4 class="text-center">Stock Market Search</h4>
@@ -55,7 +65,6 @@
 							<input id="search-input" name="symbol" ng-model="symbol" type="search" class="form-control" placeholder="e.g. AAPL" required my-directive>	
 						  <p ng-show="myForm.symbol.$invalid && myForm.symbol.$touched" class="help-block">Please enter a stock ticker symbol.</p>
 							<h1>{{myForm.symbol.$valid}}</h1>
-
 						</div>
 						<div class="col-md-4">
 							<button type="button" class="btn btn-primary" ng-disabled="myForm.$invalid" type="submit">
