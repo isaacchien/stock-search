@@ -31,46 +31,28 @@ var app = angular
   .controller('autoCompleteController', autoCompleteController);
 
 function autoCompleteController ($timeout, $q, $log, $http) {
-  var self = this;
-  self.simulateQuery = false;
-  self.isDisabled    = false;
-  
+  var self = this;  
   // list of states to be displayed
   self.states        = loadStates();
-  self.querySearch   = querySearch;
   self.selectedItemChange = selectedItemChange;
-  self.searchTextChange   = searchTextChange;
-  self.newState = newState;
   
-  function newState(state) {
-     alert("This functionality is yet to be implemented!");
-  }
-  
-  function querySearch (query) {
-     var results = query ? self.states.filter( createFilterFor(query) ) :
-        self.states, deferred;
-        
-     if (self.simulateQuery) {
-        deferred = $q.defer();
-           
-        $timeout(function () { 
-           deferred.resolve( results ); 
-        }, 
-        Math.random() * 1000, false);
-        return deferred.promise;
-     } else {
-        return results;
-     }
-  }
-  
-  function searchTextChange(text) {
+  self.results = [];
 
-    $http.get(BACKEND_URL + "/search/" + text)
+  self.querySearch = function (query) {
+    $log.info('Text changed to ' + query);
+
+    self.results = $http({
+      url: BACKEND_URL + "/search",
+      method: "GET",
+      params: {query}
+    })
     .then(function(response) {
-      $log.info('Text changed to ' + response.data);
+      // return response.data
+      $log.info(self.results)
+      return response.data;
     });
-
   }
+  
   
   function selectedItemChange(item) {
      $log.info('Item changed to ' + JSON.stringify(item));

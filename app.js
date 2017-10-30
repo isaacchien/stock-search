@@ -13,17 +13,23 @@ app.all('/*', function(req, res, next) {
 });
 
 
-app.get('/search/:search', function (req, res) {
+app.get('/search', function (req, res) {
+	var search = req.query.query;
+	if (!search){
+		console.log('empty')
+		res.send([])
+	}
 
-	var search = req.params['search'];
 	var url = "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input="+search;
+
 
 	setTimeout(function(){
 		request(url, function (error, response, body) {
 			var companies = JSON.parse(body).map(d => d.Symbol);
+			console.log(companies)
 			res.send(companies)
 		});
-	}, 1100); 
+	}, 2000);
 
 	// res.send(search)
 })
