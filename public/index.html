@@ -57,15 +57,12 @@
 	</script>
 </head>
 
-<body>
-
-
-
+<body ng-app="firstApplication">
 	<div class="container">
 		<div class="panel panel-default">
 			<h4 class="text-center">Stock Market Search</h4>
 
-			<div ng-controller = "autoCompleteController as ctrl" ng-app = "firstApplication" layout = "column" ng-cloak>
+			<div ng-controller = "autoCompleteController as ctrl" layout = "column" ng-cloak>
 					<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
 						<div class="row">
 							<div class="col-md-3">	  
@@ -83,8 +80,7 @@
 									md-items = "item in ctrl.results"
 									md-item-text = "item.Symbol"
 									md-min-length = "1"
-									placeholder = "e.g. AAPL"
-								>
+									placeholder = "e.g. AAPL">
 									<md-item-template>
 										 <span md-highlight-text = "ctrl.searchText"
 												md-highlight-flags = "^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
@@ -93,67 +89,29 @@
 									<div ng-messages="autocompleteForm.autocomplete.$error" ng-if="autocompleteForm.autocomplete.$touched && autocompleteForm.autocomplete.$invalid">
 							      <div ng-message="required">This field is required</div>
 							    </div>
-
 								</md-autocomplete>
-
 							</div>
-
-
-						<div class="col-md-3">
-							<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
-								<span class="glyphicon glyphicon-search"></span> Get Quote
-							</button>
-							<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-secondary">
-								<span class="glyphicon glyphicon-remove"></span> Clear
-							</button>
+							<div class="col-md-3">
+								<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
+									<span class="glyphicon glyphicon-search"></span> Get Quote
+								</button>
+								<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-secondary">
+									<span class="glyphicon glyphicon-remove"></span> Clear
+								</button>
+							</div>
 						</div>
-
-						 <br/>
 					</form>
 			</div>
 		</div>
-	</div>
-
-
-
-
-
-<!-- 	<div class="container"  ng-controller="formCtrl">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<h4 class="text-center">Stock Market Search</h4>
-
-				<form name="myForm" ng-submit="$event.preventDefault()" novalidate>
-					<div class="row">
-						<div class="col-md-3">	  
-							<label for="symbol">Enter Stock Ticker Symbol: *</label>
-						</div>
-
-
-
-						<div class="col-md-5">
-							<input id="search-input" name="symbol" ng-model="symbol" type="search" class="form-control" placeholder="e.g. AAPL" required my-directive>	
-							<p ng-show="myForm.symbol.$invalid && myForm.symbol.$touched" class="help-block">Please enter a stock ticker symbol.</p>
-								<h1>{{myForm.symbol}}</h1>
-							<h1>{{myForm.symbol.$valid}}</h1>
-						</div>
-
-
-
-					</div>
-
-
-
-				</form>
-			</div>
-		</div>
 		<hr>
-
 		<div class="panel panel-default">
-			<div class="panel-body">
-			</div>
+		  <div class="panel-heading">
+		    <h3 class="panel-title">Favorite List</h3>
+		  </div>
+		  <div class="panel-body">
+		    Panel content
+		  </div>
 		</div>
-	</div>
-
+	</div>	
 </body>
 </html>
