@@ -25,7 +25,7 @@ app.get('/search', function (req, res) {
 
 	setTimeout(function(){
 		request(url, function (error, response, body) {
-			var companies = JSON.parse(body).map(d => d.Symbol);
+			var companies = JSON.parse(body).map(d => (d));
 			console.log(companies)
 			res.send(companies)
 		});

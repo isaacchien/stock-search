@@ -69,13 +69,13 @@
 	          md-search-text = "ctrl.searchText"
 	          md-selected-item-change = "ctrl.selectedItemChange(item)"
 	          md-items = "item in ctrl.results"
-	          md-item-text = "item"
+	          md-item-text = "item.Symbol"
 	          md-min-length = "0"
 	          placeholder = "e.g. AAPL">
 	          
 	          <md-item-template>
 	             <span md-highlight-text = "ctrl.searchText"
-	                md-highlight-flags = "^i">{{item}}</span>
+	                md-highlight-flags = "^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
 	          </md-item-template>
 	          
 	       </md-autocomplete>

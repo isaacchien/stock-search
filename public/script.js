@@ -30,6 +30,9 @@ var app = angular
   .module('firstApplication', ['ngMaterial'])
   .controller('autoCompleteController', autoCompleteController);
 
+
+// app.constant("$MD_THEME_CSS","");
+
 function autoCompleteController ($timeout, $q, $log, $http) {
   var self = this;  
   // list of states to be displayed
@@ -48,7 +51,10 @@ function autoCompleteController ($timeout, $q, $log, $http) {
     })
     .then(function(response) {
       // return response.data
-      $log.info(self.results)
+
+      var results = response.data.map(d => (d));
+      $log.info(results)
+
       return response.data;
     });
   }
