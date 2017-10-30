@@ -27,11 +27,9 @@ var BACKEND_URL = "http://localhost:3000"
 
 
 var app = angular
-  .module('firstApplication', ['ngMaterial'])
+  .module('firstApplication', ['ngMaterial', 'ngMessages'])
   .controller('autoCompleteController', autoCompleteController);
-
-
-// app.constant("$MD_THEME_CSS","");
+  // .constant("$MD_THEME_CSS","");
 
 function autoCompleteController ($timeout, $q, $log, $http) {
   var self = this;  
