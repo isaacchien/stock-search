@@ -2,11 +2,31 @@
 
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="style.css">
-
 	<!-- Angular Material style sheet -->
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+	<style>
+		html, body {
+			position: fixed;
+			top: 0; 
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: 0;
+			padding: 0;
+			height: 100%;
+		}
+		body {
+			background-image: url("http://cs-server.usc.edu:45678/hw/hw8/images/background.png");
+		}
 
+		.container {
+			margin-top:50px;
+		}
+
+		#dropdown{
+			background-color: white;
+		}
+	</style>
 
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -30,7 +50,8 @@
 	<script src="script.js"></script>
 	<script>
 		function clearSearch(){
-			document.getElementById('search-input').value = '';
+			console.log('hi')
+			document.getElementsByName('autocomplete')[0].value = '';
 		}
 
 	</script>
@@ -51,7 +72,7 @@
 								<label for="symbol">Enter Stock Ticker Symbol: *</label>
 							</div>	
 
-							<div class="col-md-5">
+							<div class="col-md-6">
 								<md-autocomplete
 									required
 									md-input-name="autocomplete"
@@ -78,11 +99,11 @@
 							</div>
 
 
-						<div class="col-md-4">
-							<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" type="submit">
+						<div class="col-md-3">
+							<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
 								<span class="glyphicon glyphicon-search"></span> Get Quote
 							</button>
-							<button id="search-clear" type="button" onclick="clearSearch()"class="btn btn-secondary">
+							<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-secondary">
 								<span class="glyphicon glyphicon-remove"></span> Clear
 							</button>
 						</div>

@@ -13,6 +13,17 @@ app.all('/*', function(req, res, next) {
 });
 
 
+app.get('/', function (req, res) {
+	var symbol = req.query.symbol;
+	console.log(symbol)
+  var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol +"&apikey=M2E9XXHLFH4GPHF2"
+
+	request(url, function (error, response, body) {
+		res.send(body)
+	});
+})
+
+
 app.get('/search', function (req, res) {
 	var search = req.query.query;
 	if (!search){

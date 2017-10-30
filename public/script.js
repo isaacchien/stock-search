@@ -39,6 +39,23 @@ function autoCompleteController ($timeout, $q, $log, $http) {
   
   self.results = [];
 
+  self.getQuote = function(symbol) {
+    $http({
+      url: BACKEND_URL + "/",
+      method: "GET",
+      params: {symbol: symbol}
+    })
+    .then(function(response) {
+      // return response.data
+
+      $log.info('get quote ' + JSON.stringify(response.data));
+
+      return response.data;
+    });
+
+  }
+
+
   self.querySearch = function (query) {
     $log.info('Text changed to ' + query);
 
