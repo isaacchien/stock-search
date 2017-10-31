@@ -76,8 +76,14 @@
 		.panel {
 		  overflow:hidden;
 		}
+
+
+		#priceChart {
+			float:right;
+		}
 	</style>
 
+	<script src="https://code.highcharts.com/highcharts.src.js"></script>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -97,7 +103,6 @@
 	<!-- Angular Material Library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
-	<script src="script.js"></script>
 	<script>
 		function clearSearch(){
 			console.log('hi')
@@ -160,7 +165,17 @@
 	          <button class="btn btn-info" style="right:0" ng-click="view.slide='right'">right</button>
 	        </div>
 	        <div class="panel-body">
-	            left
+					  <table class="table table-striped">
+				      <tr>
+				        <th>Symbol</th>
+				        <th>Stock Price</th>
+				        <th>Change (Change Percent)</th>
+				        <th>Volume</th>
+				      </tr>
+				      <tr ng-repeat="favorite in favorites">
+				      	<td>{{favorite}}</td>
+				      </tr>
+					  </table>
 	        </div>
 	      </div>
 	    </div>
@@ -172,44 +187,63 @@
 	          <button class="btn btn-info" ng-click="view.slide='left'">left</button>
 	        </div>
 	        <div class="panel-body">
-					  <table class="table table-striped">
-				      <tr>
-				        <th>Stock Ticker Symbol</th>
-				        <td>{{symbol}}</td>
-				      </tr>
-				      <tr>
-				        <th>Last Price</th>
-				        <td>Moe</td>
-				      </tr>
-				      <tr>
-				        <th>Change (Change Percent)</th>
-				        <td>{{changePercent}}</td>
-				      </tr>
-				      <tr>
-				        <th>Timestamp</th>
-				        <td>{{timestamp}}</td>
-				      </tr>
-				      <tr>
-				        <th>Open</th>
-				        <td>{{open}}</td>
-				      </tr>
-				      <tr>
-				        <th>Close</th>
-				        <td>{{close}}</td>
-				      </tr>
-				      <tr>
-				        <th>Day's Range</th>
-				        <td>{{range}}</td>
-				      </tr>
-				      <tr>
-				        <th>Volume</th>
-				        <td>{{volume}}</td>
-				      </tr>
+		        <table>
+		        	<tr>
+		        		<td>
+								  <table class="table table-striped">
+								  	<tr>
+					        		<td>
+					        			Stock Details 
+												<button type="button" class="btn btn-default" ng-click="ctrl.addFavorite(symbol)">
+													<span class="glyphicon glyphicon-star-empty"></span>
+												</button>
+					        		</td>
+								  	</tr>
+							      <tr>
+							        <th>Stock Ticker Symbol</th>
+							        <td>{{symbol}}</td>
+							      </tr>
+							      <tr>
+							        <th>Last Price</th>
+							        <td>{{lastPrice}}</td>
+							      </tr>
+							      <tr>
+							        <th>Change (Change Percent)</th>
+							        <td>{{change}} ({{changePercent}})</td>
+							      </tr>
+							      <tr>
+							        <th>Timestamp</th>
+							        <td>{{timestamp}}</td>
+							      </tr>
+							      <tr>
+							        <th>Open</th>
+							        <td>{{open}}</td>
+							      </tr>
+							      <tr>
+							        <th>Close</th>
+							        <td>{{close}}</td>
+							      </tr>
+							      <tr>
+							        <th>Day's Range</th>
+							        <td>{{range}}</td>
+							      </tr>
+							      <tr>
+							        <th>Volume</th>
+							        <td>{{volume}}</td>
+							      </tr>
+								  </table>
+							  </td>
+							  <td>
+								  <div id="priceChart"></div>
+							  </td>
+						  </tr>
 					  </table>
 	        </div>
 	      </div>
 	    </div>
 	  </div>
-	</div>	
+	</div>
+
+	<script src="script.js"></script>
 </body>
 </html>

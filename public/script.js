@@ -1,3 +1,4 @@
+
 var BACKEND_URL = "http://localhost:3000"
 
 var app = angular
@@ -8,10 +9,15 @@ var app = angular
 function autoCompleteController ($timeout, $q, $log, $http, $scope) {
   var self = this;  
   // list of states to be displayed
-  self.states        = loadStates();
+  self.states = loadStates();
   self.selectedItemChange = selectedItemChange;
   
   self.results = [];
+  $scope.favorites = [];
+  self.addFavorite = function(symbol) {
+    $scope.favorites.push(symbol)
+    $log.info("favorites: " + $scope.favorites)
+  }
 
   self.getQuote = function(symbol) {
     $http({
@@ -23,34 +29,108 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
       $scope.view.slide = 'right'
       var metadata = response.data["Meta Data"]
       var timeseries = response.data["Time Series (Daily)"]
-      var dates = Object.keys(timeseries)
+      var dates = Object.keys(timeseries).slice(0, 112)
+      var prices = dates.map(function(date){
+        return timeseries[date]["4. close"]
+      })
+      $scope.volumes = dates.map(function(date){
+        return timeseries[date]["5. volume"]
+      })
       var today = timeseries[dates[0]]
       var yesterday = timeseries[dates[1]]
 
-      var offset = -5;
-      var now = new Date().toLocaleString("en-US", {timeZone: "America/New_York"})
-
-
-
-      $log.info('date: ' + now);
-
-
-      $scope.symbol = symbol
+      // fields where trading hours don't matter
+      $scope.symbol = symbol.toUpperCase()
+      $scope.change = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
+      $scope.changePercent = Math.round(today["4. close"] - yesterday["4. close"] / yesterday["4. close"] * 100) / 100
+      $scope.open = Number(today["1. open"]).toFixed(2)
       $scope.timestamp = metadata["3. Last Refreshed"]
-      $scope.change = (today["4. close"] - yesterday["4. close"])
-      $scope.changePercent = $scope.change / yesterday["4. close"]
-      $scope.open = today["1. open"]
-      $scope.close = today["4. close"]
-      $scope.range = today["3. low"] + " - " + today["2. high"]
+      $scope.range = Number(today["3. low"]).toFixed(2) + " - " + Number(today["2. high"]).toFixed(2)
       $scope.volume = today["5. volume"]
+      $scope.lastPrice = Number(today["4. close"]).toFixed(2)
+      Date.prototype.stdTimezoneOffset = function() {
+          var jan = new Date(this.getFullYear(), 0, 1);
+          var jul = new Date(this.getFullYear(), 6, 1);
+          return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+      }
+
+      Date.prototype.dst = function() {
+          return this.getTimezoneOffset() < this.stdTimezoneOffset();
+      }
+
+      var isDST = new Date();
+      if (isDST.dst()) { $scope.timestamp += " EDT"} else { $scope.timestamp += " EST"}
+
+      // fields where trading hours matter
+      $scope.close = Number(today["4. close"]).toFixed(2)
+
+      Highcharts.chart('priceChart', {
+        chart: {
+          type: 'area'
+        },
+        title: {
+          text: "Stock Price and Volume"
+        },
+
+        subtitle: {
+          text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+          style: {
+            color: '#4286f4'
+          },
+          useHTML: true
+
+        },
+        xAxis: {
+          categories: dates,
+          tickInterval: 5,
+
+          showLastLabel: true
+        },
+        yAxis: [{
+          // minPadding: 10000,
+          // min: <?php echo $minPrice ?>,
+          // max: <?php echo $maxPrice?>,
+          title: {
+            text: 'Stock Price'
+          }
+        },
+        {
+          tite: {
+            text: 'Volume'
+          },
+          opposite: true,
+          maxPadding: 4
+        }],
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle'
+        },
+
+        series: [{
+          marker: {
+            enabled: false,
+          },
+          name: $scope.symbol,
+          data: prices,
+          color: '#ff5b5e'
+
+        },
+        {
+          yAxis: 1,
+          type: "column",
+          name: $scope.symbol+ " Volume",
+          data: $scope.volumes,
+          color: '#ffffff'
+        }],
+
+      });      
       return response.data;
     });
-
   }
 
 
   self.querySearch = function (query) {
-    $log.info('Text changed to ' + query);
 
     self.results = $http({
       url: BACKEND_URL + "/search",
@@ -61,7 +141,6 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
       // return response.data
 
       var results = response.data.map(d => (d));
-      $log.info(results)
 
       return response.data;
     });
