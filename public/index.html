@@ -26,6 +26,56 @@
 		#dropdown{
 			background-color: white;
 		}
+
+
+
+		.panel-body {
+		  position:relative;
+		}
+
+		.my-switch-animation-right.ng-enter {
+		  -webkit-transition:.5s linear all;
+		  -moz-transition:.5s linear all;
+		  -o-transition:.5s linear all;
+		  transition:.5s linear all;
+
+		  position:absolute;
+		  height:100%;
+			width:80%;
+
+		}
+
+		.my-switch-animation-right.ng-enter {
+		  right:100%;
+		}
+
+		.my-switch-animation-right.ng-enter.ng-enter-active {
+		  right:10%;
+		}
+
+
+		.my-switch-animation-left.ng-enter {
+		  -webkit-transition:.5s linear all;
+		  -moz-transition:.5s linear all;
+		  -o-transition:.5s linear all;
+		  transition:.5s linear all;
+
+		  position:absolute;
+		  height:100%;
+			width:80%;
+		}
+
+		.my-switch-animation-left.ng-enter {
+		  left:100%;
+		}
+
+		.my-switch-animation-left.ng-enter.ng-enter-active {
+		  left:10%;
+		}
+
+		.panel {
+		  overflow:hidden;
+		}
 	</style>
 
 
@@ -59,59 +109,74 @@
 
 <body ng-app="firstApplication">
 	<div class="container">
-		<div class="panel panel-default">
+		<div class="panel panel-default" ng-controller = "autoCompleteController as ctrl" layout = "column" ng-cloak>
 			<h4 class="text-center">Stock Market Search</h4>
+			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
+				<div class="row">
+					<div class="col-md-3">	  
+						<label for="symbol">Enter Stock Ticker Symbol: *</label>
+					</div>	
+					<div class="col-md-6">
+						<md-autocomplete
+							required
+							md-input-name="autocomplete"
+							md-selected-item = "ctrl.selectedItem"
+							md-search-text-change = "ctrl.querySearch(ctrl.searchText)"
+							md-search-text = "ctrl.searchText"
+							md-selected-item-change = "ctrl.selectedItemChange(item)"
+							md-items = "item in ctrl.results"
+							md-item-text = "item.Symbol"
+							md-min-length = "1"
+							placeholder = "e.g. AAPL">
+							<md-item-template>
+								 <span md-highlight-text = "ctrl.searchText"
+										md-highlight-flags = "^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
+							</md-item-template>
 
-			<div ng-controller = "autoCompleteController as ctrl" layout = "column" ng-cloak>
-					<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
-						<div class="row">
-							<div class="col-md-3">	  
-								<label for="symbol">Enter Stock Ticker Symbol: *</label>
-							</div>	
-
-							<div class="col-md-6">
-								<md-autocomplete
-									required
-									md-input-name="autocomplete"
-									md-selected-item = "ctrl.selectedItem"
-									md-search-text-change = "ctrl.querySearch(ctrl.searchText)"
-									md-search-text = "ctrl.searchText"
-									md-selected-item-change = "ctrl.selectedItemChange(item)"
-									md-items = "item in ctrl.results"
-									md-item-text = "item.Symbol"
-									md-min-length = "1"
-									placeholder = "e.g. AAPL">
-									<md-item-template>
-										 <span md-highlight-text = "ctrl.searchText"
-												md-highlight-flags = "^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
-									</md-item-template>
-
-									<div ng-messages="autocompleteForm.autocomplete.$error" ng-if="autocompleteForm.autocomplete.$touched && autocompleteForm.autocomplete.$invalid">
-							      <div ng-message="required">This field is required</div>
-							    </div>
-								</md-autocomplete>
-							</div>
-							<div class="col-md-3">
-								<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
-									<span class="glyphicon glyphicon-search"></span> Get Quote
-								</button>
-								<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-secondary">
-									<span class="glyphicon glyphicon-remove"></span> Clear
-								</button>
-							</div>
-						</div>
-					</form>
-			</div>
+							<div ng-messages="autocompleteForm.autocomplete.$error" ng-if="autocompleteForm.autocomplete.$touched && autocompleteForm.autocomplete.$invalid">
+					      <div ng-message="required">This field is required</div>
+					    </div>
+						</md-autocomplete>
+					</div>
+					<div class="col-md-3">
+						<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
+							<span class="glyphicon glyphicon-search"></span> Get Quote
+						</button>
+						<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-secondary">
+							<span class="glyphicon glyphicon-remove"></span> Clear
+						</button>
+					</div>
+				</div>
+			</form>
 		</div>
 		<hr>
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-		    <h3 class="panel-title">Favorite List</h3>
-		  </div>
-		  <div class="panel-body">
-		    Panel content
-		  </div>
-		</div>
+
+	  <div class="view-slide" ng-switch on="view.slide" ng-init="view.slide='left'" ng-cloak>
+
+	    <div ng-switch-when="left" class="my-switch-animation-left" >
+	      <div class="panel panel-default">
+	        <div class="panel-heading">
+	        	Favorite List
+	          <button class="btn btn-info" style="right:0"ng-click="view.slide='right'">right</button>
+	        </div>
+	        <div class="panel-body">
+	            left
+	        </div>
+	      </div>
+	    </div>
+
+	    <div ng-switch-when="right" class="my-switch-animation-right" >
+	      <div class="panel panel-default">
+	        <div class="panel-heading">
+	        	Stock Detail
+	          <button class="btn btn-info" ng-click="view.slide='left'">left</button>
+	        </div>
+	        <div class="panel-body">
+	            right
+	        </div>
+	      </div>
+	    </div>
+	  </div>
 	</div>	
 </body>
 </html>

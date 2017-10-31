@@ -1,37 +1,11 @@
 var BACKEND_URL = "http://localhost:3000"
 
-// var app = angular
-//   .module('myApp', ['ngMaterial', 'ngMessages', 'material.svgAssetsCache'])
-  // .controller('DemoCtrl', DemoCtrl);
-
-
-
-
-
-// app.directive('myDirective', function() {
-//     return {
-//         require: 'ngModel',
-//         link: function(scope, element, attr, mCtrl) {
-//             function myValidation(value) {
-//                 if (value.indexOf(' ') >= 0) {
-//                     mCtrl.$setValidity('whitespace', false);
-//                 } else {
-//                     mCtrl.$setValidity('whitespace', true);
-//                 }
-//                 return value;
-//             }
-//             mCtrl.$parsers.push(myValidation);
-//         }
-//     };
-// });
-
-
 var app = angular
-  .module('firstApplication', ['ngMaterial', 'ngMessages'])
-  .controller('autoCompleteController', autoCompleteController);
+  .module('firstApplication', ['ngMaterial', 'ngMessages', 'ngAnimate'])
+  .controller('autoCompleteController', autoCompleteController)
   // .constant("$MD_THEME_CSS","");
 
-function autoCompleteController ($timeout, $q, $log, $http) {
+function autoCompleteController ($timeout, $q, $log, $http, $scope) {
   var self = this;  
   // list of states to be displayed
   self.states        = loadStates();
@@ -49,7 +23,7 @@ function autoCompleteController ($timeout, $q, $log, $http) {
       // return response.data
 
       $log.info('get quote ' + JSON.stringify(response.data));
-
+      $scope.view.slide = 'right'
       return response.data;
     });
 
