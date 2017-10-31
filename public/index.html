@@ -107,9 +107,9 @@
 	</script>
 </head>
 
-<body ng-app="firstApplication">
+<body ng-app="firstApplication" ng-controller = "autoCompleteController as ctrl">
 	<div class="container">
-		<div class="panel panel-default" ng-controller = "autoCompleteController as ctrl" layout = "column" ng-cloak>
+		<div class="panel panel-default" layout = "column" ng-cloak>
 			<h4 class="text-center">Stock Market Search</h4>
 			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
 				<div class="row">
@@ -157,7 +157,7 @@
 	      <div class="panel panel-default">
 	        <div class="panel-heading">
 	        	Favorite List
-	          <button class="btn btn-info" style="right:0"ng-click="view.slide='right'">right</button>
+	          <button class="btn btn-info" style="right:0" ng-click="view.slide='right'">right</button>
 	        </div>
 	        <div class="panel-body">
 	            left
@@ -168,11 +168,44 @@
 	    <div ng-switch-when="right" class="my-switch-animation-right" >
 	      <div class="panel panel-default">
 	        <div class="panel-heading">
-	        	Stock Detail
+	        	Stock Details
 	          <button class="btn btn-info" ng-click="view.slide='left'">left</button>
 	        </div>
 	        <div class="panel-body">
-	            right
+					  <table class="table table-striped">
+				      <tr>
+				        <th>Stock Ticker Symbol</th>
+				        <td>{{symbol}}</td>
+				      </tr>
+				      <tr>
+				        <th>Last Price</th>
+				        <td>Moe</td>
+				      </tr>
+				      <tr>
+				        <th>Change (Change Percent)</th>
+				        <td>{{changePercent}}</td>
+				      </tr>
+				      <tr>
+				        <th>Timestamp</th>
+				        <td>{{timestamp}}</td>
+				      </tr>
+				      <tr>
+				        <th>Open</th>
+				        <td>{{open}}</td>
+				      </tr>
+				      <tr>
+				        <th>Close</th>
+				        <td>{{close}}</td>
+				      </tr>
+				      <tr>
+				        <th>Day's Range</th>
+				        <td>{{range}}</td>
+				      </tr>
+				      <tr>
+				        <th>Volume</th>
+				        <td>{{volume}}</td>
+				      </tr>
+					  </table>
 	        </div>
 	      </div>
 	    </div>

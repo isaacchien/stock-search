@@ -13,30 +13,13 @@ app.all('/*', function(req, res, next) {
 });
 
 
-app.get('/', function (req, res) {
-	var symbol = req.query.symbol;
+app.get('/price/:symbol', function (req, res) {
+	var symbol = req.params['symbol'];
 
-	var promises = [];
-	
 	var price;
   var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol +"&apikey=M2E9XXHLFH4GPHF2"
-	promises.push(new Promise((resolve, reject) => {request(url, function (error, response, body) {
-		price = JSON.parse(body)
-		resolve()
-	})}));
-
-	var SMA;
-  var url = "https://www.alphavantage.co/query?function=SMA&symbol=" + symbol +"&interval=15min&time_period=10&series_type=close&apikey=M2E9XXHLFH4GPHF2"
-	promises.push(new Promise((resolve, reject) => {request(url, function (error, response, body) {
-		SMA = JSON.parse(body)
-		resolve()
-	})}));
-
-	Promise.all(promises)
-	.then((results) => {
-		var json = {"Price": price, "SMA": SMA}
-		console.log(json)
-		res.send(json)
+	request(url, function (error, response, body) {
+		res.send(body)
 	})
 })
 

@@ -15,15 +15,34 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
 
   self.getQuote = function(symbol) {
     $http({
-      url: BACKEND_URL + "/",
+      url: BACKEND_URL + "/price/" + symbol,
       method: "GET",
-      params: {symbol: symbol}
     })
     .then(function(response) {
       // return response.data
-
-      $log.info('get quote ' + JSON.stringify(response.data));
       $scope.view.slide = 'right'
+      var metadata = response.data["Meta Data"]
+      var timeseries = response.data["Time Series (Daily)"]
+      var dates = Object.keys(timeseries)
+      var today = timeseries[dates[0]]
+      var yesterday = timeseries[dates[1]]
+
+      var offset = -5;
+      var now = new Date().toLocaleString("en-US", {timeZone: "America/New_York"})
+
+
+
+      $log.info('date: ' + now);
+
+
+      $scope.symbol = symbol
+      $scope.timestamp = metadata["3. Last Refreshed"]
+      $scope.change = (today["4. close"] - yesterday["4. close"])
+      $scope.changePercent = $scope.change / yesterday["4. close"]
+      $scope.open = today["1. open"]
+      $scope.close = today["4. close"]
+      $scope.range = today["3. low"] + " - " + today["2. high"]
+      $scope.volume = today["5. volume"]
       return response.data;
     });
 
