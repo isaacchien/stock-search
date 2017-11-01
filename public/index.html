@@ -7,8 +7,8 @@
 
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.css">
 	<style>
-		html, body {
-			position: fixed;
+		html,body {
+			position: absolute;
 			top: 0; 
 			bottom: 0;
 			left: 0;
@@ -16,10 +16,10 @@
 			margin: 0;
 			padding: 0;
 			height: 100%;
-		}
-		body {
 			background-image: url("http://cs-server.usc.edu:45678/hw/hw8/images/background.png");
+
 		}
+
 		md-autocomplete-wrap.md-whiteframe-z1 {
 			box-shadow: none;
 		}
@@ -93,7 +93,6 @@
 
 		.panel {
 		  overflow:hidden;
-		  padding:20px;
 		}
 
 
@@ -134,7 +133,7 @@
 
 <body ng-app="firstApplication" ng-controller = "autoCompleteController as ctrl">
 	<div class="container" style="margin-top:50px;">
-		<div class="panel panel-default" layout = "column" ng-cloak>
+		<div class="panel panel-default" layout = "column" style="padding:20px"ng-cloak>
 			<h3 class="text-center">Stock Market Search</h3>
 			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
 				<div class="row">
@@ -181,7 +180,7 @@
 	  <div class="view-slide" ng-switch on="view.slide" ng-init="view.slide='left'" ng-cloak>
 
 	    <div ng-switch-when="left" class="my-switch-animation-left" >
-	      <div class="panel panel-default">
+	      <div class="panel panel-default" style="padding:15px 30px">
 	        <div class="panel-heading row " style="position: relative; height: 55px;">
     				<span class="col" style="display:inline;font-weight: bold;font-size: 14px;position: absolute;top: 20px;">Favorite List</span>
     				<div class="col" style="display:inline; position:absolute; right:10px;">
