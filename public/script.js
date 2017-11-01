@@ -13,7 +13,13 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
   self.selectedItemChange = selectedItemChange;
   
   self.results = [];
+  self.clearSearch = function(){
+    $scope.view.slide = 'left'
+    $log.info($scope)
+    $scope.ctrl.searchText = ""
+    $scope.ctrl.selectedItem = ""
 
+  }
   self.showFavorites = function () {
     var favStorage = localStorage.getItem("favorites")
     $scope.favorites = []
