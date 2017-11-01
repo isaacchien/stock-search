@@ -10,12 +10,10 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
 
   var self = this;  
   // list of states to be displayed
-  self.selectedItemChange = selectedItemChange;
   
   self.results = [];
   self.clearSearch = function(){
     $scope.view.slide = 'left'
-    $log.info($scope)
     $scope.ctrl.searchText = ""
     $scope.ctrl.selectedItem = ""
 
@@ -26,7 +24,6 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
 
     if (favStorage){
       var favArray = JSON.parse(favStorage)
-      $log.info("size: " + favArray.length)
       favArray.map(function(favorite) {
         return $http({
           url: BACKEND_URL + "/price/" + favorite,
@@ -52,7 +49,6 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
           return stock
         })
       })
-      $log.info("favorites: " + favArray)
     }
   }
   self.showDetail = function() {
@@ -60,14 +56,10 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
     var isFavorite = false;
 
     for (var fav in $scope.favorites){
-      $log.info($scope.favorites[fav].symbol)
-      $log.info($scope.symbol)
-
       if($scope.favorites[fav].symbol == $scope.symbol){
         isFavorite = true;
       }
     }
-    $log.info(isFavorite)
     if (isFavorite) {
       $scope.star = "<span class='glyphicon glyphicon-star'></span>"
     } else {
@@ -94,13 +86,11 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
         $scope.star = "<span class='glyphicon glyphicon-star'></span>"
       }
     }
-    $log.info("updateFavorites: " + favArray);
 
     localStorage.setItem("favorites", JSON.stringify(favArray))
   }
 
   self.getQuote = function(symbol) {
-    $log.info("getQuote: " + symbol)
     $http({
       url: BACKEND_URL + "/price/" + symbol,
       method: "GET",
@@ -233,9 +223,6 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
   }
   
   
-  function selectedItemChange(item) {
-     $log.info('Item changed to ' + JSON.stringify(item));
-  }
   
 
   

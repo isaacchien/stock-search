@@ -132,14 +132,14 @@
 	<div class="container" style="margin-top:50px;">
 		<div class="panel panel-default" layout = "column" style="padding:20px"ng-cloak>
 			<h3 class="text-center">Stock Market Search</h3>
-			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
+			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate>
 				<div class="row">
 					<div class="col-md-3" style="margin:20px 0px;">	  
 						<label for="symbol">Enter Stock Ticker Symbol: <span style="color:red">*</span></label>
 					</div>	
 					<div class="col-md-6" style="margin:20px 0px;">
 						<md-autocomplete
-							required
+							flex required
 							md-input-class="form-control"
 							md-input-name="autocomplete"
 							md-selected-item = "ctrl.selectedItem"
@@ -156,9 +156,10 @@
 										md-highlight-flags = "^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
 							</md-item-template>
 
-							<div ng-messages="autocompleteForm.autocomplete.$error" ng-if="autocompleteForm.autocomplete.$touched && autocompleteForm.autocomplete.$invalid">
+							<div ng-messages="autocompleteForm.$invalid">
 					      <div ng-message="required">This field is required</div>
 					    </div>
+
 						</md-autocomplete>
 					</div>
 					<div class="col-md-3" style="margin:20px 0px;">
