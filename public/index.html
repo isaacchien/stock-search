@@ -3,7 +3,9 @@
 <html>
 <head>
 	<!-- Angular Material style sheet -->
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.1/angular-material.min.css">
 	<style>
 		html, body {
 			position: fixed;
@@ -18,11 +20,25 @@
 		body {
 			background-image: url("http://cs-server.usc.edu:45678/hw/hw8/images/background.png");
 		}
-
-		.container {
-			margin-top:50px;
+		md-autocomplete-wrap.md-whiteframe-z1 {
+			box-shadow: none;
+		}
+		#input-0{
+			border:1.5px solid #cecece;
+			border-radius:5px;
 		}
 
+		#input-0:focus {
+			border:1.5px solid #81c2f1;
+		}
+
+		md-progress-linear { display: none; }
+
+		md-autocomplete button { display: none !important; }
+
+		.dropdown-toggle {
+			width:100%;
+		}
 		#dropdown{
 			background-color: white;
 		}
@@ -77,6 +93,7 @@
 
 		.panel {
 		  overflow:hidden;
+		  padding:20px;
 		}
 
 
@@ -89,12 +106,11 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
 
 	<!-- Angular Material requires Angular.js Libraries -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
@@ -102,13 +118,14 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.js"></script>
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
 	<!-- Angular Material Library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
 	<script>
 		function clearSearch(){
-			console.log('hi')
 			document.getElementsByName('autocomplete')[0].value = '';
 		}
 
@@ -116,17 +133,18 @@
 </head>
 
 <body ng-app="firstApplication" ng-controller = "autoCompleteController as ctrl">
-	<div class="container">
+	<div class="container" style="margin-top:50px;">
 		<div class="panel panel-default" layout = "column" ng-cloak>
-			<h4 class="text-center">Stock Market Search</h4>
+			<h3 class="text-center">Stock Market Search</h3>
 			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate="">
 				<div class="row">
-					<div class="col-md-3">	  
-						<label for="symbol">Enter Stock Ticker Symbol: *</label>
+					<div class="col-md-3" style="margin:20px 0px;">	  
+						<label for="symbol">Enter Stock Ticker Symbol: <span style="color:red">*</span></label>
 					</div>	
-					<div class="col-md-6">
+					<div class="col-md-6" style="margin:20px 0px;">
 						<md-autocomplete
 							required
+							md-input-class="form-control"
 							md-input-name="autocomplete"
 							md-selected-item = "ctrl.selectedItem"
 							md-search-text-change = "ctrl.querySearch(ctrl.searchText)"
@@ -135,6 +153,7 @@
 							md-items = "item in ctrl.results"
 							md-item-text = "item.Symbol"
 							md-min-length = "1"
+							md-clear-button="false"
 							placeholder = "e.g. AAPL">
 							<md-item-template>
 								 <span md-highlight-text = "ctrl.searchText"
@@ -146,12 +165,12 @@
 					    </div>
 						</md-autocomplete>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-3" style="margin:20px 0px;">
 						<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
 							<span class="glyphicon glyphicon-search"></span> Get Quote
 						</button>
-						<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-secondary">
-							<span class="glyphicon glyphicon-remove"></span> Clear
+						<button id="search-clear" type="button" onclick="clearSearch()" class="btn btn-default">
+							<span class="glyphicon glyphicon-refresh"></span>		Clear
 						</button>
 					</div>
 				</div>
@@ -163,11 +182,55 @@
 
 	    <div ng-switch-when="left" class="my-switch-animation-left" >
 	      <div class="panel panel-default">
-	        <div class="panel-heading">
-	        	Favorite List
-	          <button class="btn btn-info" style="right:0" ng-click="ctrl.showDetail()">right</button>
+	        <div class="panel-heading row " style="position: relative; height: 55px;">
+    				<span class="col" style="display:inline;font-weight: bold;font-size: 14px;position: absolute;top: 20px;">Favorite List</span>
+    				<div class="col" style="display:inline; position:absolute; right:10px;">
+    				<span class="hidden-xs">Automatic Refresh:</span>
+    				<input type="checkbox" data-toggle="toggle">
+	          <button class="btn btn-default" ng-click="ctrl.showFavorites()"><span class="glyphicon glyphicon-refresh"></span></button>
+	          <button type="button" class="btn btn-default" ng-click="ctrl.showDetail()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+	          </div>
 	        </div>
 	        <div class="panel-body">
+	        	<div class="container">
+	        	<div class="row" style="font-weight: bold;position: relative; margin-bottom:20px">
+	        		<div class="col-sm-1">
+		        		Sort By
+							</div>
+							<div class="dropdown col-sm-3">
+							  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							    Dropdown
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							    <li><a href="#">Default</a></li>
+							    <li><a href="#">Symbol</a></li>
+							    <li><a href="#">Price</a></li>
+							    <li><a href="#">Change</a></li>
+							    <li><a href="#">Change Percent</a></li>
+							    <li><a href="#">Volume</a></li>
+							  </ul>
+        			</div>
+	        		<div class="col-sm-1">
+		        		Order
+	        		</div>
+        			<div class="dropdown col-sm-3">
+							  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							    Dropdown
+							    <span class="caret"></span>
+							  </button>
+							  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							    <li><a href="#">Default</a></li>
+							    <li><a href="#">Symbol</a></li>
+							    <li><a href="#">Price</a></li>
+							    <li><a href="#">Change</a></li>
+							    <li><a href="#">Change Percent</a></li>
+							    <li><a href="#">Volume</a></li>
+							  </ul>
+							</div>
+	        	</div>
+	        	</div>
+	        	<div class="table-responsive">
 					  <table class="table table-striped" ng-init="ctrl.showFavorites()">
 				      <tr>
 				        <th>Symbol</th>
@@ -181,9 +244,10 @@
 				      	<td>{{favorite.stockPrice}}</td>
 				      	<td>{{favorite.change}} ({{favorite.changePercent}})</td>
 				      	<td>{{favorite.stockPrice}}</td>
-				      	<td><button class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button></td>
+				      	<td><button class="btn btn-default" ng-click="ctrl.updateFavorites(favorite.symbol)"><span class="glyphicon glyphicon-trash"></span></button></td>
 				      </tr>
 					  </table>
+					  </div>
 	        </div>
 	      </div>
 	    </div>
@@ -192,7 +256,7 @@
 	      <div class="panel panel-default">
 	        <div class="panel-heading">
 	        	Stock Details
-	          <button class="btn btn-info" ng-click="view.slide='left'">left</button>
+	          <button class="btn btn-default" ng-click="view.slide='left'"><span class="glyphicon glyphicon-chevron-left"></span></button>
 	        </div>
 	        <div class="panel-body">
 		        <table>
