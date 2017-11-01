@@ -19,7 +19,9 @@
 			background-image: url("http://cs-server.usc.edu:45678/hw/hw8/images/background.png");
 
 		}
-
+		#input-0.ng-touched.ng-invalid {
+			border:1.5px solid red !important;
+		}
 		md-autocomplete-wrap.md-whiteframe-z1 {
 			box-shadow: none;
 		}
@@ -128,7 +130,7 @@
 	</script>
 </head>
 
-<body ng-app="firstApplication" ng-controller = "autoCompleteController as ctrl">
+<body ng-app="stockSearch" ng-controller = "stockSearchController as ctrl">
 	<div class="container" style="margin-top:50px;">
 		<div class="panel panel-default" layout = "column" style="padding:20px"ng-cloak>
 			<h3 class="text-center">Stock Market Search</h3>
@@ -156,11 +158,10 @@
 										md-highlight-flags = "^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
 							</md-item-template>
 
-							<div ng-messages="autocompleteForm.$invalid">
-					      <div ng-message="required">This field is required</div>
-					    </div>
-
 						</md-autocomplete>
+						<p ng-show="autocompleteForm.autocomplete.$invalid && autocompleteForm.autocomplete.$touched" class="help-block">Please enter a stock ticker symbol.</p>
+
+						<h1>{{autocompleteForm.autocomplete.$valid}}</h1>
 					</div>
 					<div class="col-md-3" style="margin:20px 0px;">
 						<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">

@@ -2,11 +2,11 @@
 var BACKEND_URL = "http://localhost:3000"
 
 var app = angular
-  .module('firstApplication', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngSanitize'])
-  .controller('autoCompleteController', autoCompleteController)
+  .module('stockSearch', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngSanitize'])
+  .controller('stockSearchController', stockSearchController)
   // .constant("$MD_THEME_CSS","");
 
-function autoCompleteController ($timeout, $q, $log, $http, $scope) {
+function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
   var self = this;  
   // list of states to be displayed
@@ -16,7 +16,11 @@ function autoCompleteController ($timeout, $q, $log, $http, $scope) {
     $scope.view.slide = 'left'
     $scope.ctrl.searchText = ""
     $scope.ctrl.selectedItem = ""
+    $scope.autocompleteForm.$setPristine();
+    $scope.autocompleteForm.$setValidity("autocompleteForm", true);
+    $scope.autocompleteForm.$setUntouched("autocompleteForm", true);
 
+    $log.info($scope);
   }
   self.showFavorites = function () {
     var favStorage = localStorage.getItem("favorites")
