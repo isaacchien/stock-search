@@ -198,22 +198,33 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       return response.data;
     });
   }
-  
 
-  function makeSMA(symbol) {
+  function makeIndicatorChart(indicator, symbol) {
     $http({
-      url: BACKEND_URL + "/indicator/SMA/" + symbol,
+      url: BACKEND_URL + "/indicator/" + indicator + "/" + symbol,
       method:"GET"
     })
     .then(function(response) {
-      $log.info(response)
-      var dates = Object.keys(response.data["Technical Analysis: SMA"]).slice(0,112)
-      var values = Object.values(Object.values(response.data["Technical Analysis: SMA"]).slice(0,112)).map(function(kv){
-        return parseFloat(kv["SMA"])
-      })
+      var data = response.data["Technical Analysis: " + indicator]
+      var dates = Object.keys(data).slice(0,112)
+      var keys = Object.keys(data[dates[0]])
+
+      var series = []
+      for (var i in keys) {
+        var key = keys[i]
+        var name = symbol + " " + key
+        var values = Object.values(Object.values(data).slice(0,112)).map(function(value){
+          return parseFloat(value[key])
+        })
+        series.push({
+          "name": name,
+          "data": values
+        })
+      }
+      $log.info(series);
 
       var title = {
-         text: "Simple Moving Average: SMA"
+         text: response.data["Meta Data"]["2: Indicator"]
       };
       var subtitle = {
         text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
@@ -228,391 +239,16 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         };
       var yAxis = {
          title: {
-          text: "SMA"
+          text: indicator
          }
       };   
-      var series =  [{
-        name: symbol,
-        data: values
-         }
-      ];
       var json = {};
       json.title = title;
       json.subtitle = subtitle;
       json.xAxis = xAxis;
       json.yAxis = yAxis;
       json.series = series;
-      Highcharts.chart('SMA-Chart', json);
-
-      return response.data
-
-    });
-  }
-
-  function makeEMA(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/EMA/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-      $log.info(response)
-
-      var dates = Object.keys(response.data["Technical Analysis: EMA"]).slice(0,112)
-      var values = Object.values(Object.values(response.data["Technical Analysis: EMA"]).slice(0,112)).map(function(value){
-        return parseFloat(value["EMA"])
-      })
-
-      var title = {
-         text: "Exponential Moving Average: EMA"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "EMA"
-         }
-      };   
-      var series =  [{
-        name: symbol,
-        data: values
-         }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('EMA-Chart', json);
-
-      return response.data
-
-    });
-  }
-  function makeRSI(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/RSI/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-      $log.info(response)
-
-      var dates = Object.keys(response.data["Technical Analysis: RSI"]).slice(0,112)
-      var values = Object.values(Object.values(response.data["Technical Analysis: RSI"]).slice(0,112)).map(function(value){
-        return parseFloat(value["RSI"])
-      })
-
-      var title = {
-         text: "Relative Strength Index: RSI"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "RSI"
-         }
-      };   
-      var series =  [{
-        name: symbol,
-        data: values
-         }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('RSI-Chart', json);
-
-      return response.data
-
-    });
-  }
-  function makeADX(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/ADX/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-      $log.info(response)
-      var dates = Object.keys(response.data["Technical Analysis: ADX"]).slice(0,112)
-      var values = Object.values(Object.values(response.data["Technical Analysis: ADX"]).slice(0,112)).map(function(value){
-        return parseFloat(value["ADX"])
-      })
-
-      var title = {
-         text: "Average Directional Movement Index: ADX"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "ADX"
-         }
-      };   
-      var series =  [{
-        name: symbol,
-        data: values
-         }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('ADX-Chart', json);
-
-      return response.data
-
-    });
-  }
-  function makeCCI(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/CCI/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-      var dates = Object.keys(response.data["Technical Analysis: CCI"]).slice(0,112)
-      var values = Object.values(Object.values(response.data["Technical Analysis: CCI"]).slice(0,112)).map(function(value){
-        return parseFloat(value["CCI"])
-      })
-
-      var title = {
-         text: "Commodity Channel Index (CCI)"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "CCI"
-         }
-      };   
-      var series =  [{
-        name: symbol,
-        data: values
-         }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('CCI-Chart', json);
-
-      return response.data
-
-    });
-  }
-  function makeSTOCH(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/STOCH/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-
-      var dates = Object.keys(response.data["Technical Analysis: STOCH"]).slice(0,112)
-      var slowDValues = Object.values(Object.values(response.data["Technical Analysis: STOCH"]).slice(0,112)).map(function(value){
-        return parseFloat(value["SlowD"])
-      })
-      var slowKValues = Object.values(Object.values(response.data["Technical Analysis: STOCH"]).slice(0,112)).map(function(value){
-        return parseFloat(value["SlowK"])
-      })
-      var title = {
-         text: "Stochastic (STOCH)"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "STOCH"
-         }
-      };   
-      var series =  [{
-        name: symbol + " SlowD",
-        data: slowDValues
-        },
-        {
-        name: symbol + " SlowK",
-        data: slowKValues
-        }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('STOCH-Chart', json);
-
-      return response.data
-
-    });
-  }
-  function makeBBANDS(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/BBANDS/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-
-      var dates = Object.keys(response.data["Technical Analysis: BBANDS"]).slice(0,112)
-      var lower = Object.values(Object.values(response.data["Technical Analysis: BBANDS"]).slice(0,112)).map(function(value){
-        return parseFloat(value["Real Lower Band"])
-      })
-      var middle = Object.values(Object.values(response.data["Technical Analysis: BBANDS"]).slice(0,112)).map(function(value){
-        return parseFloat(value["Real Middle Band"])
-      })
-      var higher = Object.values(Object.values(response.data["Technical Analysis: BBANDS"]).slice(0,112)).map(function(value){
-        return parseFloat(value["Real Higher Band"])
-      })      
-      var title = {
-         text: "Bollinger Bands (BBANDS)"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "BBANDS"
-         }
-      };   
-      var series =  [{
-        name: symbol + " Real Lower Band",
-        data: lower
-        },
-        {
-        name: symbol + " Real Middle Band",
-        data: middle
-        },
-        {
-        name: symbol + " Real Higher Band",
-        data: higher
-        }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('BBANDS-Chart', json);
-
-      return response.data
-
-    });
-  }
-  function makeMACD(symbol) {
-    $http({
-      url: BACKEND_URL + "/indicator/MACD/" + symbol,
-      method:"GET"
-    })
-    .then(function(response) {
-
-      var dates = Object.keys(response.data["Technical Analysis: MACD"]).slice(0,112)
-      var signal = Object.values(Object.values(response.data["Technical Analysis: MACD"]).slice(0,112)).map(function(value){
-        return parseFloat(value["MACD_Signal"])
-      })
-      var hist = Object.values(Object.values(response.data["Technical Analysis: MACD"]).slice(0,112)).map(function(value){
-        return parseFloat(value["MACD_Hist"])
-      })
-      var macd = Object.values(Object.values(response.data["Technical Analysis: MACD"]).slice(0,112)).map(function(value){
-        return parseFloat(value["MACD"])
-      })      
-      var title = {
-         text: "Moving Average Convergence/Divergence (MACD)"
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
-        };
-      var yAxis = {
-         title: {
-          text: "MACD"
-         }
-      };   
-      var series =  [{
-        name: symbol + " MACD_Signal",
-        data: signal
-        },
-        {
-        name: symbol + " MACD_Hist",
-        data: hist
-        },
-        {
-        name: symbol,
-        data: macd
-        }
-      ];
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart('MACD-Chart', json);
+      Highcharts.chart(indicator + '-Chart', json);
 
       return response.data
 
@@ -681,14 +317,20 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       makePriceChart(prices, volumes, dates)
 
 
-      makeSMA($scope.symbol)
-      makeEMA($scope.symbol)
-      makeRSI($scope.symbol)
-      makeADX($scope.symbol)
-      makeCCI($scope.symbol)
-      makeSTOCH($scope.symbol)
-      makeBBANDS($scope.symbol)
-      makeMACD($scope.symbol)
+      // makeSMA($scope.symbol)
+      // makeEMA($scope.symbol)
+      // makeRSI($scope.symbol)
+      // makeADX($scope.symbol)
+      // makeCCI($scope.symbol)
+      // makeSTOCH($scope.symbol)
+      // makeBBANDS($scope.symbol)
+      // makeMACD($scope.symbol)
+
+      var indicators = ["SMA", "EMA", "RSI", "ADX", "CCI", "STOCH", "BBANDS", "MACD"]
+
+      for (i in indicators){
+        makeIndicatorChart(indicators[i], $scope.symbol)
+      }
 
       Highcharts.stockChart('historicalChart', {
 
