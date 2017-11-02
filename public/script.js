@@ -94,10 +94,16 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     var isDST = new Date();
     if (isDST.dst()) { $scope.timestamp += " EDT"} else { $scope.timestamp += " EST"}
 
-    $log.info("prices: " + prices)
+    prices = prices.map(function(x){
+      return parseFloat(x)
+    })
+    volumes = volumes.map(function(x){
+      return parseFloat(x)
+    })
+
+    $log.info("prices: " + typeof(prices[0]))
     $log.info("volumes: " + volumes)
     $log.info("dates: " + dates)
-
     // fields where trading hours matter
     $scope.close = Number(today["4. close"]).toFixed(2)  
     $timeout(function() {
@@ -133,8 +139,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         xAxis: {
           categories: dates,
           tickInterval: 5,
-
-          showLastLabel: true
+          showLastLabel: true,
+          reversed: true
         },
         yAxis: [{
           // minPadding: 10000,
@@ -151,11 +157,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
           opposite: true,
           maxPadding: 4
         }],
-        legend: {
-          layout: 'vertical',
-          align: 'right',
-          verticalAlign: 'middle'
-        },
 
         series: [{
           marker: {
@@ -163,17 +164,66 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
           },
           name: $scope.symbol,
           data: prices,
-          color: '#ff5b5e'
+          color: '#4600ff'
 
         },
         {
           yAxis: 1,
           type: "column",
           name: $scope.symbol+ " Volume",
-          data: $scope.volumes,
-          color: '#ffffff'
+          data: volumes,
+          color: '#ff0000'
         }],
 
+      });
+
+      Highcharts.stockChart('historicalChart', {
+
+        chart: {
+            height: 400,
+            width:null
+        },
+
+        title: {
+            text: 'Highstock Responsive Chart'
+        },
+
+        subtitle: {
+            text: 'Click small/large buttons or change window size to test responsiveness'
+        },
+
+        rangeSelector: {
+            selected: 1
+        },
+
+        series: [{
+            name: $scope.symbol,
+            data: prices,
+            type: 'area',
+            threshold: null,
+            tooltip: {
+                valueDecimals: 2
+            }
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    },
+                    subtitle: {
+                        text: null
+                    },
+                    navigator: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
       });
     })  
   }
@@ -231,8 +281,5 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     });
   }
   
-  
-  
-
   
 }
