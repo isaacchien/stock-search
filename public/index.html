@@ -251,12 +251,27 @@
 	    </div>
 
 	    <div ng-switch-when="right" class="my-switch-animation-right" >
-	      <div class="panel panel-default">
-	        <div class="panel-heading">
-	        	Stock Details
-	          <button class="btn btn-default" ng-click="view.slide='left'"><span class="glyphicon glyphicon-chevron-left"></span></button>
+	      <div class="panel panel-default" style="padding:15px 30px; position:relative;">
+	        <div class="panel-heading row " style="position: relative; height: 55px; text-align:center;">
+    				<span class="col" style="display:inline;font-weight: bold;font-size: 14px;position: absolute;top: 20px;">Stock Detail</span>
+  					<div class="col" style="display:inline; position:absolute; right:10px;">
+							<button class="btn btn-default" ng-click="view.slide='left'"><span class="glyphicon glyphicon-chevron-left"></span></button>
+	        	</div>
 	        </div>
 	        <div class="panel-body">
+						<ul class="nav nav-pills">
+						  <li class="active"><a href="#"><span class="glyphicon glyphicon-time"></span>Current Stock</a></li>
+						  <li><a href="#"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></li>
+						  <li><a href="#"><span class="glyphicon glyphicon-link"></span>News Feed</a></li>
+						</ul>
+
+<!-- 						<uib-tabset type="pills">
+					    <uib-tab heading="Default Size"><span class="glyphicon glyphicon-time"></span>Current Stock</a></uib-tab>
+					    <uib-tab heading="Default Size"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></uib-tab>
+					    <uib-tab heading="Default Size"><span class="glyphicon glyphicon-time"></span>News Feed</a></uib-tab>
+					  </uib-tabset> -->
+
+						<hr>
 	        	<div class="container">
 		        	<div class="row">
 			        	<div class="col-md-6">

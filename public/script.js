@@ -73,7 +73,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     var yesterday = timeseries[dates[1]]
 
     // fields where trading hours don't matter
-    $scope.symbol = metadata["2. Symbol"]
+    $scope.symbol = metadata["2. Symbol"].toUpperCase()
     $scope.change = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
     $scope.changePercent = Math.round(today["4. close"] - yesterday["4. close"] / yesterday["4. close"] * 100) / 100
     $scope.open = Number(today["1. open"]).toFixed(2)
@@ -96,6 +96,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
     $log.info("prices: " + prices)
     $log.info("volumes: " + volumes)
+    $log.info("dates: " + dates)
 
     // fields where trading hours matter
     $scope.close = Number(today["4. close"]).toFixed(2)  
@@ -179,6 +180,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
 
   self.updateFavorites = function(symbol) {
+    symbol = symbol.toUpperCase()
     var favStorage = localStorage.getItem("favorites")    
     if (favStorage == null){
       var favArray = [symbol]
