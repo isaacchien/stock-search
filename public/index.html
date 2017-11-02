@@ -259,20 +259,14 @@
 	        	</div>
 	        </div>
 	        <div class="panel-body">
-						<ul class="nav nav-pills">
-						  <li class="active"><a href="#"><span class="glyphicon glyphicon-time"></span>Current Stock</a></li>
-						  <li><a href="#"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></li>
-						  <li><a href="#"><span class="glyphicon glyphicon-link"></span>News Feed</a></li>
-						</ul>
-
-<!-- 						<uib-tabset type="pills">
-					    <uib-tab heading="Default Size"><span class="glyphicon glyphicon-time"></span>Current Stock</a></uib-tab>
-					    <uib-tab heading="Default Size"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></uib-tab>
-					    <uib-tab heading="Default Size"><span class="glyphicon glyphicon-time"></span>News Feed</a></uib-tab>
-					  </uib-tabset> -->
-
+					  <ul class="nav nav-pills">
+					    <li class="active"><a data-toggle="pill" href="#current"><span class="glyphicon glyphicon-time"></span>Current Stock</a></li>
+					    <li><a data-toggle="pill" href="#historical"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></li>
+					    <li><a data-toggle="pill" href="#news"><span class="glyphicon glyphicon-link"></span>News Feed</a></li>
+					  </ul>
 						<hr>
-	        	<div class="container">
+						<div class='tab-content'>
+	        	<div class="container tab-pane fade in active" id="current">
 		        	<div class="row">
 			        	<div class="col-md-6">
 						  		<table class="table table-striped col">
@@ -315,6 +309,9 @@
 							  </div>
 							  <div id="priceChart" class="col-md-6"></div>
 						  </div>
+					  </div>
+					  <div class="container tab-pane fade in active" id="historical">
+					  </div>
 					  </div>
 	        </div>
 	      </div>
