@@ -45,7 +45,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
           var stock = {}
           stock['symbol'] = metadata["2. Symbol"]
           stock['change'] = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
-          stock['changePercent'] = Math.round(today["4. close"] - yesterday["4. close"] / yesterday["4. close"] * 100) / 100
+          stock['changePercent'] = (stock['change'] / yesterday["4. close"] * 100).toFixed(2)
           stock['volume'] = today["5. volume"]
           stock['stockPrice'] = Number(today["4. close"]).toFixed(2)
           
@@ -55,6 +55,67 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       })
     }
   }
+  function makePriceChart(prices, volumes, dates) {
+    Highcharts.chart('Price-Chart', {
+      chart: {
+        type: 'area'
+      },
+      title: {
+        text: "Stock Price and Volume"
+      },
+
+      subtitle: {
+        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+        style: {
+          color: '#4286f4'
+        },
+        useHTML: true
+
+      },
+      xAxis: {
+        categories: dates,
+        tickInterval: 5,
+        showLastLabel: true,
+        reversed: true,
+        startOnTick: true,
+        showFirstLabel: true
+      },
+      yAxis: [{
+        // minPadding: 10000,
+        // min: <?php echo $minPrice ?>,
+        // max: <?php echo $maxPrice?>,
+        title: {
+          text: 'Stock Price'
+        }
+      },
+      {
+        tite: {
+          text: 'Volume'
+        },
+        opposite: true,
+        maxPadding: 4
+      }],
+
+      series: [{
+        marker: {
+          enabled: false,
+        },
+        name: $scope.symbol,
+        data: prices,
+        color: '#5000ff'
+
+      },
+      {
+        yAxis: 1,
+        type: "column",
+        name: $scope.symbol+ " Volume",
+        data: volumes,
+        color: '#ff0000'
+      }],
+
+    });
+  }
+
   self.showDetail = function(response) {
     $scope.view.slide='right'
 
@@ -73,7 +134,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     // fields where trading hours don't matter
     $scope.symbol = metadata["2. Symbol"].toUpperCase()
     $scope.change = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
-    $scope.changePercent = Math.round(today["4. close"] - yesterday["4. close"] / yesterday["4. close"] * 100) / 100
+    $scope.changePercent = ($scope.change / yesterday["4. close"] * 100).toFixed(2)
     $scope.open = Number(today["1. open"]).toFixed(2)
     $scope.timestamp = metadata["3. Last Refreshed"]
     $scope.range = Number(today["3. low"]).toFixed(2) + " - " + Number(today["2. high"]).toFixed(2)
@@ -115,63 +176,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       }
 
       // inject chart
-      Highcharts.chart('priceChart', {
-        chart: {
-          type: 'area'
-        },
-        title: {
-          text: "Stock Price and Volume"
-        },
-
-        subtitle: {
-          text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-          style: {
-            color: '#4286f4'
-          },
-          useHTML: true
-
-        },
-        xAxis: {
-          categories: dates,
-          tickInterval: 5,
-          showLastLabel: true,
-          reversed: true
-        },
-        yAxis: [{
-          // minPadding: 10000,
-          // min: <?php echo $minPrice ?>,
-          // max: <?php echo $maxPrice?>,
-          title: {
-            text: 'Stock Price'
-          }
-        },
-        {
-          tite: {
-            text: 'Volume'
-          },
-          opposite: true,
-          maxPadding: 4
-        }],
-
-        series: [{
-          marker: {
-            enabled: false,
-          },
-          name: $scope.symbol,
-          data: prices,
-          color: '#4600ff'
-
-        },
-        {
-          yAxis: 1,
-          type: "column",
-          name: $scope.symbol+ " Volume",
-          data: volumes,
-          color: '#ff0000'
-        }],
-
-      });
-
+      makePriceChart(prices, volumes, dates)
       Highcharts.stockChart('historicalChart', {
 
         chart: {

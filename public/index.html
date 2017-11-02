@@ -101,6 +101,14 @@
 		#priceChart {
 			float:right;
 		}
+
+		.percent-arrow {
+			display: inline-block;
+		}
+		.percent-arrow-image {
+			height:20px;
+			width:20px;
+		}
 	</style>
 
 <!-- 	<script src="https://code.highcharts.com/highcharts.src.js"></script>
@@ -135,8 +143,8 @@
 </head>
 
 <body ng-app="stockSearch" ng-controller = "stockSearchController as ctrl">
-	<div class="container" style="margin-top:50px;">
-		<div class="panel panel-default" layout = "column" style="padding:20px"ng-cloak>
+	<div class="container" style="margin-top:50px; margin-bottom:50px">
+		<div class="panel panel-default" layout = "column" style="padding:40px"ng-cloak>
 			<h3 class="text-center">Stock Market Search</h3>
 			<form name="autocompleteForm" ng-submit = "$event.preventDefault()" novalidate>
 				<div class="row">
@@ -163,9 +171,7 @@
 							</md-item-template>
 
 						</md-autocomplete>
-						<p ng-show="autocompleteForm.autocomplete.$invalid && autocompleteForm.autocomplete.$touched" class="help-block">Please enter a stock ticker symbol.</p>
-
-						<h1>{{autocompleteForm.autocomplete.$valid}}</h1>
+						<span ng-show="autocompleteForm.autocomplete.$invalid && autocompleteForm.autocomplete.$touched" style="position:absolute;" class="help-block">Please enter a stock ticker symbol.</span>
 					</div>
 					<div class="col-md-3" style="margin:20px 0px;">
 						<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
@@ -190,7 +196,7 @@
     				<span class="hidden-xs">Automatic Refresh:</span>
     				<input type="checkbox" data-toggle="toggle">
 	          <button class="btn btn-default" ng-click="ctrl.showFavorites()"><span class="glyphicon glyphicon-refresh"></span></button>
-	          <button type="button" class="btn btn-default" ng-click="ctrl.showDetail()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+	          <button type="button" class="btn btn-default" ng-click="ctrl.getQuote(symbol)"><span class="glyphicon glyphicon-chevron-right"></span></button>
 	          </div>
 	        </div>
 	        <div class="panel-body">
@@ -244,7 +250,10 @@
 				      <tr ng-repeat="favorite in favorites">
 				      	<td><a ng-click="ctrl.getQuote(favorite.symbol)">{{favorite.symbol}}</a></td>
 				      	<td>{{favorite.stockPrice}}</td>
-				      	<td>{{favorite.change}} ({{favorite.changePercent}})</td>
+				      	<td ng-if="favorite.change >= 0" style="color:green">{{favorite.change}} ({{favorite.changePercent}}%) <div class="percent-arrow" ng-if="favorite.change >= 0"><img class="percent-arrow-image" ng-src="http://cs-server.usc.edu:45678/hw/hw8/images/Up.png"></div>
+				      	</td>
+				      	<td ng-if="favorite.change < 0" style="color:red">{{favorite.change}} ({{favorite.changePercent}}%) <div class="percent-arrow" ng-if="favorite.change < 0"><img class="percent-arrow-image" ng-src="http://cs-server.usc.edu:45678/hw/hw8/images/Down.png"></div>
+				      	</td>
 				      	<td>{{favorite.stockPrice}}</td>
 				      	<td><button class="btn btn-default" ng-click="ctrl.updateFavorites(favorite.symbol)"><span class="glyphicon glyphicon-trash"></span></button></td>
 				      </tr>
@@ -270,12 +279,15 @@
 					  </ul>
 						<hr>
 						<div class='tab-content'>
-	        	<div class="tab-pane fade in active" id="current">
+	        	<div class="tab-pane in active" id="current">
 		        	<div class="row">
 			        	<div class="col-md-6">
 						  		<table class="table table-striped col">
-					        	Stock Details 
-										<button type="button" class="btn btn-default" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)">
+						  			<div class="row" style="padding-bottom:10px">
+						        	<span style="font-weight:bold;position: absolute;left: 20px;" class="col">Stock Details</span>
+
+											<button type="button" class="btn btn-default col" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)" style="float:right">
+										</div>
 										</button>
 							      <tr>
 							        <th>Stock Ticker Symbol</th>
@@ -287,7 +299,10 @@
 							      </tr>
 							      <tr>
 							        <th>Change (Change Percent)</th>
-							        <td>{{change}} ({{changePercent}})</td>
+							      	<td ng-if="change >= 0" style="color:green">{{change}} ({{changePercent}}%) <div class="percent-arrow" ng-if="change >= 0"><img class="percent-arrow-image" ng-src="http://cs-server.usc.edu:45678/hw/hw8/images/Up.png"></div>
+							      	</td>
+							      	<td ng-if="change < 0" style="color:red">{{change}} ({{changePercent}}%) <div class="percent-arrow" ng-if="change < 0"><img class="percent-arrow-image" ng-src="http://cs-server.usc.edu:45678/hw/hw8/images/Down.png"></div>
+							      	</td>
 							      </tr>
 							      <tr>
 							        <th>Timestamp</th>
@@ -311,13 +326,38 @@
 							      </tr>
 								  </table>
 							  </div>
-							  <div id="priceChart" class="col-md-6"></div>
+
+							  <div class="col-md-6">
+									<ul class="nav nav-tabs">
+									  <li class="active"><a data-toggle="tab" href="#Price-Chart">Price</a></li>
+									  <li><a data-toggle="tab" href="#SMA-Chart">SMA</a></li>
+									  <li><a data-toggle="tab" href="#EMA-Chart">EMA</a></li>
+									  <li><a data-toggle="tab" href="#STOCH-Chart">STOCH</a></li>
+									  <li><a data-toggle="tab" href="#RSI-Chart">RSI</a></li>
+									  <li><a data-toggle="tab" href="#ADX-Chart">ADX</a></li>
+									  <li><a data-toggle="tab" href="#CCI-Chart">CCI</a></li>
+									  <li><a data-toggle="tab" href="#BBANDS-Chart">BBANDS</a></li>
+									  <li><a data-toggle="tab" href="#MACD-Chart">MACD</a></li>
+									</ul>
+
+									<div class="tab-content">
+									  <div id="Price-Chart" class="tab-pane in active"></div>
+									  <div id="SMA-Chart" class="tab-pane in "></div>
+									  <div id="EMA-Chart" class="tab-pane in "></div>
+									  <div id="STOCH-Chart" class="tab-pane in "></div>
+									  <div id="RSI-Chart" class="tab-pane in "></div>
+									  <div id="ADX-Chart" class="tab-pane in "></div>
+									  <div id="CCI-Chart" class="tab-pane in "></div>
+									  <div id="BBANDS-Chart" class="tab-pane in "></div>
+									  <div id="MACD-Chart" class="tab-pane in "></div>
+								  </div>
+							  </div>
 						  </div>
 					  </div>
-					  <div class="tab-pane fade in active" id="historical">
+					  <div class="tab-pane in" id="historical">
 					  	<div id="historicalChart"></div>
 					  </div>
-					  <div class="tab-pane fade in active" id="news">
+					  <div class="tab-pane in" id="news">
 							<div ng-repeat="n in news track by $index">
 							  <div class="well well-lg" >
 							  	<a target="_blank" href={{n.link}} style="font-size:18px">{{n.title}}</a><br><br>
