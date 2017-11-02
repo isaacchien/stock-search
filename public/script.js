@@ -57,8 +57,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
   }
   self.showDetail = function(response) {
     $scope.view.slide='right'
-    var isFavorite = false;
-
 
     var metadata = response.data["Meta Data"]
     var timeseries = response.data["Time Series (Daily)"]
@@ -100,14 +98,11 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     volumes = volumes.map(function(x){
       return parseFloat(x)
     })
-
-    $log.info("prices: " + typeof(prices[0]))
-    $log.info("volumes: " + volumes)
-    $log.info("dates: " + dates)
     // fields where trading hours matter
     $scope.close = Number(today["4. close"]).toFixed(2)  
     $timeout(function() {
       // inject favorite star
+      var isFavorite = false;
       for (var fav in $scope.favorites){
         if($scope.favorites[fav].symbol == $scope.symbol){
           isFavorite = true;
@@ -207,22 +202,22 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         }],
 
         responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    chart: {
-                        height: 300
-                    },
-                    subtitle: {
-                        text: null
-                    },
-                    navigator: {
-                        enabled: false
-                    }
-                }
-            }]
+          rules: [{
+              condition: {
+                  maxWidth: 500
+              },
+              chartOptions: {
+                  chart: {
+                      height: 300
+                  },
+                  subtitle: {
+                      text: null
+                  },
+                  navigator: {
+                      enabled: false
+                  }
+              }
+          }]
         }
       });
     })  
@@ -252,6 +247,35 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     localStorage.setItem("favorites", JSON.stringify(favArray))
   }
 
+  function setNews(symbol){
+    $scope.news = []
+    $http({
+      url: BACKEND_URL + "/news/" + symbol,
+      method: "GET",
+    })
+    .then(function(response) {
+
+      var parser = new DOMParser();
+      var xmlDoc = parser.parseFromString(response.data,"text/xml");
+
+      for (var i = 0; i < 5; i++){
+        var title = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("title")[0].childNodes[0].nodeValue
+        var author = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("sa:author_name")[0].childNodes[0].nodeValue
+        var link = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("link")[0].childNodes[0].nodeValue
+        var pubDate = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("pubDate")[0].childNodes[0].nodeValue
+        $scope.news.push({
+          "title": title,
+          "author": author,
+          "link": link,
+          "pubDate": pubDate
+        })
+      }
+
+      return response.data;
+    });
+
+  }
+
   self.getQuote = function(symbol) {
     $http({
       url: BACKEND_URL + "/price/" + symbol,
@@ -259,6 +283,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     })
     .then(function(response) {
       self.showDetail(response)
+
+      setNews(symbol);
           
       return response.data;
     });

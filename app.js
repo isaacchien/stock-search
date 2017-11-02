@@ -12,6 +12,9 @@ app.all('/*', function(req, res, next) {
   next();
 });
 
+app.get('/', function (req, res) {
+	res.send("hi")
+})
 
 app.get('/price/:symbol', function (req, res) {
 	var symbol = req.params['symbol'];
@@ -32,16 +35,22 @@ app.get('/search', function (req, res) {
 
 	var url = "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input="+search;
 
-
-	setTimeout(function(){
-		request(url, function (error, response, body) {
-			var companies = JSON.parse(body).map(d => (d));
-			res.send(companies)
-		});
-	}, 2000);
+	request(url, function (error, response, body) {
+		var companies = JSON.parse(body).map(d => (d));
+		res.send(companies)
+	});
 
 	// res.send(search)
 })
+
+app.get('/news/:symbol', function(req, res){
+
+	var symbol = req.params['symbol'];
+	var url = "https://seekingalpha.com/api/sa/combined/"+symbol+".xml";
+	request(url, function (error, response, body) {
+		res.send(body)
+	});
+});
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')

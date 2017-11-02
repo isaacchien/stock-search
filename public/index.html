@@ -317,6 +317,15 @@
 					  <div class="tab-pane fade in active" id="historical">
 					  	<div id="historicalChart"></div>
 					  </div>
+					  <div class="tab-pane fade in active" id="news">
+							<div ng-repeat="n in news track by $index">
+							  <div class="well well-lg" >
+							  	<a target="_blank" href={{n.link}} style="font-size:18px">{{n.title}}</a><br><br>
+							  	<strong>{{n.author}}</strong><br><br>
+							  	<strong>{{n.pubDate}}</strong>
+							  </div>
+							</div>
+					  </div>
 					  </div>
 	        </div>
 	      </div>
