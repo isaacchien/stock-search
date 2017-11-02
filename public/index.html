@@ -257,17 +257,13 @@
 	          <button class="btn btn-default" ng-click="view.slide='left'"><span class="glyphicon glyphicon-chevron-left"></span></button>
 	        </div>
 	        <div class="panel-body">
-		        <table>
-		        	<tr>
-		        		<td>
-								  <table class="table table-striped">
-								  	<tr>
-					        		<td>
-					        			Stock Details 
-												<button type="button" class="btn btn-default" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)">
-												</button>
-					        		</td>
-								  	</tr>
+	        	<div class="container">
+		        	<div class="row">
+			        	<div class="col-md-6">
+						  		<table class="table table-striped col">
+					        	Stock Details 
+										<button type="button" class="btn btn-default" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)">
+										</button>
 							      <tr>
 							        <th>Stock Ticker Symbol</th>
 							        <td>{{symbol}}</td>
@@ -301,12 +297,10 @@
 							        <td>{{volume}}</td>
 							      </tr>
 								  </table>
-							  </td>
-							  <td>
-								  <div id="priceChart"></div>
-							  </td>
-						  </tr>
-					  </table>
+							  </div>
+							  <div id="priceChart" class="col-md-6"></div>
+						  </div>
+					  </div>
 	        </div>
 	      </div>
 	    </div>

@@ -19,7 +19,6 @@ app.get('/price/:symbol', function (req, res) {
 	var price;
   var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=M2E9XXHLFH4GPHF2"
 	request(url, function (error, response, body) {
-		console.log(body)
 		res.send(body)
 	})
 })
@@ -28,7 +27,6 @@ app.get('/price/:symbol', function (req, res) {
 app.get('/search', function (req, res) {
 	var search = req.query.query;
 	if (!search){
-		console.log('empty')
 		res.send([])
 	}
 
@@ -38,7 +36,6 @@ app.get('/search', function (req, res) {
 	setTimeout(function(){
 		request(url, function (error, response, body) {
 			var companies = JSON.parse(body).map(d => (d));
-			console.log(companies)
 			res.send(companies)
 		});
 	}, 2000);
