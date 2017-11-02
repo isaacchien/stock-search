@@ -26,6 +26,15 @@ app.get('/price/:symbol', function (req, res) {
 	})
 })
 
+app.get('/price/:symbol', function (req, res) {
+	var symbol = req.params['symbol'];
+
+	var price;
+  var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=M2E9XXHLFH4GPHF2"
+	request(url, function (error, response, body) {
+		res.send(body)
+	})
+})
 
 app.get('/search', function (req, res) {
 	var search = req.query.query;
@@ -51,6 +60,17 @@ app.get('/news/:symbol', function(req, res){
 		res.send(body)
 	});
 });
+
+app.get('/indicator/:indicator/:symbol', function (req, res) {
+	var symbol = req.params['symbol'];
+	var indicator = req.params['indicator'];
+
+	var price;
+  var url = "https://www.alphavantage.co/query?function="+ indicator + "&symbol=" + symbol + "&interval=daily&time_period=10&series_type=close&apikey=M2E9XXHLFH4GPHF2"
+	request(url, function (error, response, body) {
+		res.send(body)
+	})
+})
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
