@@ -21,6 +21,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.autocompleteForm.$setUntouched("autocompleteForm", true);
 
   }
+  self.currentChart;
   self.showFavorites = function () {
     var favStorage = localStorage.getItem("favorites")
     $scope.favorites = []
@@ -221,7 +222,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
           "data": values
         })
       }
-      $log.info(series);
 
       var title = {
          text: response.data["Meta Data"]["2: Indicator"]
@@ -381,5 +381,36 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         }
       });
     })  
+  }
+
+  self.shareFacebook = function() {
+    var chartType = $('.nav-tabs .active').text()
+    var chartID = "#"+chartType + "-Chart"
+    var chart=$(chartID).highcharts();
+
+    var data = {
+      options: chart.options,
+      filename: chartID,
+      type: 'image/png',
+      async: true
+    };
+    var exportUrl = 'http://export.highcharts.com/';
+
+    $http({
+      url: exportUrl,
+      method:"POST",
+      data: data
+    }).then(function(response){
+      var url = exportUrl + "/"+response.data
+      $log.info(url)
+
+      FB.ui({
+        method: 'feed',
+        link: url,
+      }, function(response){
+
+      });
+
+    })
   }
 }

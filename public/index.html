@@ -143,6 +143,26 @@
 </head>
 
 <body ng-app="stockSearch" ng-controller = "stockSearchController as ctrl">
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '457717077955623',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.10'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+
 	<div class="container" style="margin-top:50px; margin-bottom:50px">
 		<div class="panel panel-default" layout = "column" style="padding:40px"ng-cloak>
 			<h3 class="text-center">Stock Market Search</h3>
@@ -285,10 +305,11 @@
 						  		<table class="table table-striped col">
 						  			<div class="row" style="padding-bottom:10px">
 						        	<span style="font-weight:bold;position: absolute;left: 20px;" class="col">Stock Details</span>
+											<button type="button" ng-click="ctrl.shareFacebook()" class="btn btn-default col" style="float:right;height:40px;width:40px;margin-right: 30px;margin-left: 10px;"><img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" style="height: 25px;position: relative;right: 5px;"></button>
 
-											<button type="button" class="btn btn-default col" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)" style="float:right">
+											<button type="button" class="btn btn-default col" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)" style="float:right;height:40px; width:40px;"></button>
+
 										</div>
-										</button>
 							      <tr>
 							        <th>Stock Ticker Symbol</th>
 							        <td>{{symbol}}</td>
