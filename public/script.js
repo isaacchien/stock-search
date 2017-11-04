@@ -23,37 +23,10 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
   }
   self.currentChart;
   self.showFavorites = function () {
-    var favStorage = localStorage.getItem("favorites")
-    $scope.favorites = []
+    var favStorage = localStorage.getItem("favorites");
 
-    if (favStorage){
-      var favArray = JSON.parse(favStorage)
-      favArray.map(function(favorite) {
-        return $http({
-          url: BACKEND_URL + "/price/" + favorite,
-          method: "GET",
-        }).then(function(response) {
-
-          var metadata = response.data["Meta Data"]
-          var timeseries = response.data["Time Series (Daily)"]
-          var dates = Object.keys(timeseries).slice(0, 2)
-
-          var today = timeseries[dates[0]]
-          var yesterday = timeseries[dates[1]]
-
-          // fields where trading hours don't matter
-          var stock = {}
-          stock['symbol'] = metadata["2. Symbol"]
-          stock['change'] = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
-          stock['changePercent'] = (stock['change'] / yesterday["4. close"] * 100).toFixed(2)
-          stock['volume'] = today["5. volume"]
-          stock['stockPrice'] = Number(today["4. close"]).toFixed(2)
-          
-          $scope.favorites.push(stock)
-          return stock
-        })
-      })
-    }
+    $scope.favorites = JSON.parse(favStorage)
+    // $log.info($scope.favorites)
   }
   function makePriceChart(prices, volumes, dates) {
     Highcharts.chart('Price-Chart', {
@@ -121,23 +94,69 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     symbol = symbol.toUpperCase()
     var favStorage = localStorage.getItem("favorites")    
     if (favStorage == null){
-      var favArray = [symbol]
+      $http.get(BACKEND_URL + "/price/" + symbol).then(function(response){
+        var metadata = response.data["Meta Data"]
+        var timeseries = response.data["Time Series (Daily)"]
+        var dates = Object.keys(timeseries).slice(0, 2)
+
+        var today = timeseries[dates[0]]
+        var yesterday = timeseries[dates[1]]
+
+        // fields where trading hours don't matter
+        var stock = {}
+        stock['symbol'] = metadata["2. Symbol"]
+        stock['change'] = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
+        stock['changePercent'] = (stock['change'] / yesterday["4. close"] * 100).toFixed(2)
+        stock['volume'] = today["5. volume"]
+        stock['stockPrice'] = Number(today["4. close"]).toFixed(2)
+
+        localStorage.setItem("favorites", JSON.stringify([stock]))
+      })
+      $scope.star = "<span class='glyphicon glyphicon-star'></span>"
+
     } else {
       var favArray = JSON.parse(favStorage)
-      if (favArray.includes(symbol)){ // delete symbol
-        $scope.star = "<span class='glyphicon glyphicon-star-empty'></span>"
 
-        var index = favArray.indexOf(symbol);
+      if (favStorage.includes(symbol)){ // delete symbol
+        $scope.star = "<span class='glyphicon glyphicon-star-empty'></span>"
+        var index = -1;
+        for (var i in favArray){
+          if (Object.values(favArray[i]).includes(symbol)){
+            index = i
+            break;
+          }
+        }
         if (index > -1) { 
             favArray.splice(index, 1);
         }
+        localStorage.setItem("favorites", JSON.stringify(favArray))
+
       } else { // add symbol
-        favArray.push(symbol)
+
+        $http.get(BACKEND_URL + "/price/" + symbol).then(function(response){
+          var metadata = response.data["Meta Data"]
+          var timeseries = response.data["Time Series (Daily)"]
+          var dates = Object.keys(timeseries).slice(0, 2)
+
+          var today = timeseries[dates[0]]
+          var yesterday = timeseries[dates[1]]
+
+          // fields where trading hours don't matter
+          var stock = {}
+          stock['symbol'] = metadata["2. Symbol"]
+          stock['change'] = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
+          stock['changePercent'] = (stock['change'] / yesterday["4. close"] * 100).toFixed(2)
+          stock['volume'] = today["5. volume"]
+          stock['stockPrice'] = Number(today["4. close"]).toFixed(2)
+          favArray.push(stock)
+          localStorage.setItem("favorites", JSON.stringify(favArray))
+        })
+
+
         $scope.star = "<span class='glyphicon glyphicon-star'></span>"
       }
     }
 
-    localStorage.setItem("favorites", JSON.stringify(favArray))
   }
 
   function setNews(symbol){
