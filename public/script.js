@@ -10,8 +10,12 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
   var self = this;  
   // list of states to be displayed
-  
   self.results = [];
+  $scope.sortBy = 'Default'
+  $scope.order = 'Ascending'
+  $scope.sortings = ['Default', 'Symbol', 'Price', 'Change', 'Change Percent', 'Volume'];
+  $scope.orderings = ['Ascending', 'Descending'];
+
   self.clearSearch = function(){
     $scope.view.slide = 'left'
     $scope.ctrl.searchText = ""
@@ -21,12 +25,74 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.autocompleteForm.$setUntouched("autocompleteForm", true);
 
   }
-  self.currentChart;
+
   self.showFavorites = function () {
     var favStorage = localStorage.getItem("favorites");
-
-    $scope.favorites = JSON.parse(favStorage)
+    var favArray = JSON.parse(favStorage)
+    $scope.favorites = favArray;
+    if ($scope.sortBy == "Default"){
+      $scope.favorites = favArray
+    } else if ($scope.sortBy == "Symbol"){
+      favArray.sort(function(a, b) {
+        return a[1] - b[1];
+      });
+      $log.info(favArray)
+      $scope.favorites = favArray
+    }
     // $log.info($scope.favorites)
+  }
+  self.sort = function(sortBy, order) {
+    var favStorage = localStorage.getItem("favorites");
+    var favArray = JSON.parse(favStorage)
+    $log.info(favArray)
+    if (sortBy == "Default"){
+      $scope.favorites = favArray
+    } else if (sortBy == "Symbol"){
+      favArray.sort(function(a, b) {
+        if (order == "Ascending"){
+          return a["symbol"].localeCompare(b["symbol"]);
+        } else {
+          return b["symbol"].localeCompare(a["symbol"]);
+        }
+      });
+      $scope.favorites = favArray
+    } else if (sortBy == "Price") {
+      favArray.sort(function(a, b) {
+        if (order == "Ascending"){
+          return a["stockPrice"] - b["stockPrice"];
+        } else {
+          return b["stockPrice"] - a["stockPrice"];
+        }
+      });
+      $scope.favorites = favArray
+    } else if (sortBy == "Change") {
+      favArray.sort(function(a, b) {
+        if (order == "Ascending"){
+          return a["change"] - b["change"];
+        } else {
+          return b["change"] - a["change"];
+        }
+      });
+      $scope.favorites = favArray
+    } else if (sortBy == "Change Percent") {
+      favArray.sort(function(a, b) {
+        if (order == "Ascending"){
+          return a["changePercent"] - b["changePercent"];
+        } else {
+          return b["changePercent"] - a["changePercent"];
+        }
+      });
+      $scope.favorites = favArray
+    } else if (sortBy == "Volume") {
+      favArray.sort(function(a, b) {
+        if (order == "Ascending"){
+          return a["volume"] - b["volume"];
+        } else {
+          return b["volume"] - a["volume"];
+        }
+      });
+      $scope.favorites = favArray
+    }
   }
   function makePriceChart(prices, volumes, dates) {
     Highcharts.chart('Price-Chart', {
@@ -225,6 +291,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       method:"GET"
     })
     .then(function(response) {
+      $log.info(response)
       var data = response.data["Technical Analysis: " + indicator]
       var dates = Object.keys(data).slice(0,112)
       var keys = Object.keys(data[dates[0]])
