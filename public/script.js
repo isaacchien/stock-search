@@ -10,6 +10,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
   var self = this;  
   // list of states to be displayed
+  self.timeouted;
   self.results = [];
   $scope.sortBy = 'Default'
   $scope.order = 'Ascending'
@@ -299,10 +300,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     });
   }
 
-
-  self.querySearch = function (query) {
-
-    self.results = $http({
+  function getStockSearch(query) {
+    return $http({
       url: BACKEND_URL + "/search",
       method: "GET",
       params: {query}
@@ -310,10 +309,23 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     .then(function(response) {
       // return response.data
 
-      var results = response.data.map(d => (d));
-
+      // var results = response.data.map(d => (d));
       return response.data;
     });
+  }
+  self.querySearch = function (query) {
+    clearTimeout(self.timeouted)
+
+    return new Promise(function(resolve, reject) {
+      self.timeouted = setTimeout(function () {
+        resolve(getStockSearch(query))
+      }, 1000)
+    }).then(function(done){
+      $log.info(done)
+      return done
+    });
+
+
   }
 
   function makeIndicatorChart(indicator, symbol) {

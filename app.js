@@ -40,14 +40,14 @@ app.get('/search', function (req, res) {
 	var search = req.query.query;
 	if (!search){
 		res.send([])
+	} else {
+		var url = "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input="+search;
+
+		request(url, function (error, response, body) {
+			var companies = JSON.parse(body).map(d => (d));
+			res.send(companies)
+		});
 	}
-
-	var url = "http://dev.markitondemand.com/MODApis/Api/v2/Lookup/json?input="+search;
-
-	request(url, function (error, response, body) {
-		var companies = JSON.parse(body).map(d => (d));
-		res.send(companies)
-	});
 
 	// res.send(search)
 })
