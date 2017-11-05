@@ -209,7 +209,7 @@
     				<div class="col" style="display:inline; position:absolute; right:10px;">
     				<span class="hidden-xs">Automatic Refresh:</span>
     				<input type="checkbox" data-toggle="toggle">
-	          <button class="btn btn-default" ng-click="ctrl.showFavorites()"><span class="glyphicon glyphicon-refresh"></span></button>
+	          <button class="btn btn-default" ng-click="ctrl.refreshFavorites()"><span class="glyphicon glyphicon-refresh"></span></button>
 	          <button type="button" class="btn btn-default" ng-click="ctrl.getQuote(symbol)"><span class="glyphicon glyphicon-chevron-right"></span></button>
 	          </div>
 	        </div>
@@ -227,7 +227,7 @@
 							  <label for="sortBy">Sort by</label>
 							</div>
 							<div class="form-group col-sm-2">
-							  <select ng-options="ordering as ordering for ordering in orderings" class="form-control" id="order" ng-model="order" ng-change="ctrl.sort(sortBy, order)" >
+							  <select ng-options="ordering as ordering for ordering in orderings" ng-disabled="sortBy=='Default'" class="form-control" id="order" ng-model="order" ng-change="ctrl.sort(sortBy, order)" >
 							  </select>
 							</div>
 	        	</div>

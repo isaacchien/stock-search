@@ -25,7 +25,37 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.autocompleteForm.$setUntouched("autocompleteForm", true);
 
   }
+  function getStockPrice(stock){
+    $http
+    .get(BACKEND_URL + "/price/" + stock.symbol)
+    .then(function(response){
+      var metadata = response.data["Meta Data"]
+      var timeseries = response.data["Time Series (Daily)"]
+      var dates = Object.keys(timeseries).slice(0, 2)
 
+      var today = timeseries[dates[0]]
+      var yesterday = timeseries[dates[1]]
+
+      // fields where trading hours don't matter
+      stock['change'] = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
+      stock['changePercent'] = (stock['change'] / yesterday["4. close"] * 100).toFixed(2)
+      stock['volume'] = today["5. volume"]
+      stock['stockPrice'] = Number(today["4. close"]).toFixed(2)
+    })
+  }
+  self.refreshFavorites = function() {
+    $log.info("refresh")
+    var favStorage = localStorage.getItem("favorites");
+    var favArray = JSON.parse(favStorage)
+
+    for (var i in favArray) {
+      $log.info(favArray[i])
+      var oldStock = favArray[i]
+      getStockPrice(oldStock)
+    }
+    localStorage.setItem("favorites", JSON.stringify(favArray))
+    $scope.favorites = favArray
+  }
   self.showFavorites = function () {
     var favStorage = localStorage.getItem("favorites");
     var favArray = JSON.parse(favStorage)
@@ -189,6 +219,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         for (var i in favArray){
           if (Object.values(favArray[i]).includes(symbol)){
             index = i
+            $log.info("index: " + index)
+            $scope.favorites.splice(index, 1)
             break;
           }
         }
@@ -222,7 +254,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         $scope.star = "<span class='glyphicon glyphicon-star'></span>"
       }
     }
-
   }
 
   function setNews(symbol){
