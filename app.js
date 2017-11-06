@@ -22,19 +22,17 @@ app.get('/price/:symbol', function (req, res) {
 	var price;
   var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=M2E9XXHLFH4GPHF2"
 	request(url, function (error, response, body) {
-		res.send(body)
+	  console.log("body: " + body)
+
+		if (body.includes("Error")){
+			console.log(error)
+			res.status(404).send(error)
+		} else {
+			res.send(body)
+		}
 	})
 })
 
-app.get('/price/:symbol', function (req, res) {
-	var symbol = req.params['symbol'];
-
-	var price;
-  var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=M2E9XXHLFH4GPHF2"
-	request(url, function (error, response, body) {
-		res.send(body)
-	})
-})
 
 app.get('/search', function (req, res) {
 	var search = req.query.query;

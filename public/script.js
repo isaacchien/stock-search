@@ -44,13 +44,12 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       stock['stockPrice'] = Number(today["4. close"]).toFixed(2)
     })
   }
-  self.refreshFavorites = function() {
-    $log.info("refresh")
+  $scope.refreshFavorites = function() {
+    $log.info("refresh favorites")
     var favStorage = localStorage.getItem("favorites");
     var favArray = JSON.parse(favStorage)
 
     for (var i in favArray) {
-      $log.info(favArray[i])
       var oldStock = favArray[i]
       getStockPrice(oldStock)
     }
@@ -67,7 +66,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       favArray.sort(function(a, b) {
         return a[1] - b[1];
       });
-      $log.info(favArray)
       $scope.favorites = favArray
     }
     // $log.info($scope.favorites)
@@ -297,6 +295,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       setNews(symbol);
           
       return response.data;
+    }, function(error){
+      alert("Not Found")
     });
   }
 

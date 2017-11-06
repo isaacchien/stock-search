@@ -18,6 +18,7 @@
 			height: 100%;
 			background-image: url("http://cs-server.usc.edu:45678/hw/hw8/images/background.png");
 
+
 		}
 		#input-0.ng-touched.ng-invalid {
 			border:1.5px solid red !important;
@@ -136,7 +137,7 @@
 	</script>
 </head>
 
-<body ng-app="stockSearch" ng-controller = "stockSearchController as ctrl">
+<body ng-app="stockSearch" id="stockSearchController" ng-controller="stockSearchController as ctrl">
 <script>
   window.fbAsyncInit = function() {
     FB.init({
@@ -186,7 +187,7 @@
 						</md-autocomplete>
 						<span ng-show="autocompleteForm.autocomplete.$invalid && autocompleteForm.autocomplete.$touched" style="position:absolute;" class="help-block">Please enter a stock ticker symbol.</span>
 					</div>
-					<div class="col-md-3" style="margin:20px 0px;">
+					<div class="col-md-3" style="margin-top:40px;">
 						<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
 							<span class="glyphicon glyphicon-search"></span> Get Quote
 						</button>
@@ -207,9 +208,29 @@
     				<span class="col" style="display:inline;font-weight: bold;font-size: 14px;position: absolute;top: 20px;">Favorite List</span>
     				<div class="col" style="display:inline; position:absolute; right:10px;">
     				<span class="hidden-xs">Automatic Refresh:</span>
-    				<input type="checkbox" data-toggle="toggle">
-	          <button class="btn btn-default" ng-click="ctrl.refreshFavorites()"><span class="glyphicon glyphicon-refresh"></span></button>
-	          <button type="button" class="btn btn-default" ng-click="ctrl.getQuote(symbol)"><span class="glyphicon glyphicon-chevron-right"></span></button>
+
+    				<input id="toggle-event" type="checkbox" data-toggle="toggle">
+						<script>
+							var interval;
+						  $(function() {
+						    $('#toggle-event').unbind().click().change(function() {
+						    	if($('#toggle-event')[0].checked) {
+					    			angular.element('#stockSearchController').scope().refreshFavorites()
+						    		interval = setInterval(function(){
+						    			if (!$('#toggle-event')[0].checked) {
+						    				clearInterval(interval);
+						    			}
+						    			angular.element('#stockSearchController').scope().refreshFavorites()
+						    		}, 1000)
+						    	} else {
+						    		clearInterval(interval)
+						    	}
+						    })
+						  })
+						</script>
+
+	          <button class="btn btn-default" ng-click="refreshFavorites()"><span class="glyphicon glyphicon-refresh"></span></button>
+	          <button type="button" class="btn btn-default" ng-disabled="!symbol" ng-click="ctrl.getQuote(symbol)"><span class="glyphicon glyphicon-chevron-right"></span></button>
 	          </div>
 	        </div>
 	        <div class="panel-body">
@@ -223,7 +244,7 @@
 							  </select>
 							</div>
 	        		<div class="col-sm-1">
-							  <label for="sortBy">Sort by</label>
+							  <label for="sortBy">Order</label>
 							</div>
 							<div class="form-group col-sm-2">
 							  <select ng-options="ordering as ordering for ordering in orderings" ng-disabled="sortBy=='Default'" class="form-control" id="order" ng-model="order" ng-change="ctrl.sort(sortBy, order)" >
