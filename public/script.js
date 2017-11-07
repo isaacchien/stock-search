@@ -1,5 +1,5 @@
 
-var BACKEND_URL = "http://localhost:3000"
+var BACKEND_URL = "http://localhost:8080"
 
 var app = angular
   .module('stockSearch', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngSanitize'])
@@ -58,6 +58,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.favorites = favArray
   }
   self.showFavorites = function () {
+    $scope.view.slide = 'left'
     var favStorage = localStorage.getItem("favorites");
     var favArray = JSON.parse(favStorage)
     $scope.favorites = favArray;

@@ -5,6 +5,8 @@ const request = require('request');
 
 const app = express()
 
+app.use('/', express.static(__dirname + '/public'));
+
 //enable cors
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -13,7 +15,7 @@ app.all('/*', function(req, res, next) {
 });
 
 app.get('/', function (req, res) {
-	res.send("hi")
+	res.sendFile(__dirname + '/index.html');
 })
 
 app.get('/price/:symbol', function (req, res) {
@@ -71,5 +73,5 @@ app.get('/indicator/:indicator/:symbol', function (req, res) {
 })
 
 app.listen(8080, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('Example app listening on port 8080!')
 })
