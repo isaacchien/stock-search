@@ -53,6 +53,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       var oldStock = favArray[i]
       getStockPrice(oldStock)
     }
+    $log.info(favArray);
     localStorage.setItem("favorites", JSON.stringify(favArray))
     $scope.favorites = favArray
   }
