@@ -45,7 +45,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     })
   }
   $scope.refreshFavorites = function() {
-    $log.info("refresh favorites")
     var favStorage = localStorage.getItem("favorites");
     var favArray = JSON.parse(favStorage)
 
@@ -53,7 +52,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       var oldStock = favArray[i]
       getStockPrice(oldStock)
     }
-    $log.info(favArray);
     localStorage.setItem("favorites", JSON.stringify(favArray))
     $scope.favorites = favArray
   }
@@ -70,12 +68,10 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       });
       $scope.favorites = favArray
     }
-    // $log.info($scope.favorites)
   }
   self.sort = function(sortBy, order) {
     var favStorage = localStorage.getItem("favorites");
     var favArray = JSON.parse(favStorage)
-    $log.info(favArray)
     if (sortBy == "Default"){
       $scope.favorites = favArray
     } else if (sortBy == "Symbol"){
@@ -220,7 +216,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         for (var i in favArray){
           if (Object.values(favArray[i]).includes(symbol)){
             index = i
-            $log.info("index: " + index)
             $scope.favorites.splice(index, 1)
             break;
           }
@@ -323,7 +318,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         resolve(getStockSearch(query))
       }, 1000)
     }).then(function(done){
-      $log.info(done)
       return done
     });
 
@@ -336,7 +330,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       method:"GET"
     })
     .then(function(response) {
-      $log.info(response)
       var data = response.data["Technical Analysis: " + indicator]
       var dates = Object.keys(data).slice(0,112)
       var keys = Object.keys(data[dates[0]])
@@ -533,7 +526,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       data: data
     }).then(function(response){
       var url = exportUrl + "/"+response.data
-      $log.info(url)
 
       FB.ui({
         method: 'feed',
