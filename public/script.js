@@ -57,6 +57,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.favorites = favArray
   }
   self.showFavorites = function () {
+    $('input[type=checkbox][data-toggle^=toggle]').bootstrapToggle()
     $scope.view.slide = 'left'
     var favStorage = localStorage.getItem("favorites");
     var favArray = JSON.parse(favStorage)
@@ -283,8 +284,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
           })
         }
       }
-
-      $log.info("ERROR NEWS: " + $scope.news.length)
 
       if ($scope.news.length === 0) {
         $scope.error["News"] = true
@@ -518,10 +517,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         result.push( [ parseFloat(historicalDates[i]), parseFloat(historicalPrices[i]) ] );
       }
       result = result.reverse()
-      $log.info(historicalDates)
-      $log.info(historicalPrices)
-      $log.info(result)
-
       Highcharts.stockChart('historicalChart', 
       {
         chart: {
