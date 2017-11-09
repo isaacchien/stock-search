@@ -124,10 +124,12 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     }
   }
   function makePriceChart(prices, volumes, dates) {
-    var dates = dates.map(function(x){
+    dates = dates.map(function(x){
       var date = new Date(x)
-      return ( (date.getMonth() + 1) + "/" + (date.getDay() + 1))
+      return ( (date.getMonth() + 1) + "/" + (date.getDate() + 1))
     })
+    $log.info(dates)
+
     Highcharts.chart('Price-Chart', {
       chart: {
         type: 'area',
@@ -296,6 +298,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
   }
 
   self.getQuote = function(symbol) {
+
     $scope.loadingCharts = true;
     $scope.loadingDetail = true;
     $scope.loadingHistorical = true;
@@ -320,6 +323,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       method: "GET",
     })
     .then(function(response) {
+      $scope.view.slide='right'
       self.showDetail(response, symbol)
 
       setNews(symbol);
@@ -396,7 +400,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         };
         dates = dates.map(function(x){
           var date = new Date(x)
-          return ( (date.getMonth() + 1) + "/" + (date.getDay() + 1))
+          return ( (date.getMonth() + 1) + "/" + (date.getDate() + 1))
         })
         var xAxis = {
            categories: dates,
@@ -424,7 +428,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     });
   }
   self.showDetail = function(response) {
-    $scope.view.slide='right'
     if (Object.keys(response.data).length === 0) {
       $scope.error["Price"] = true;
       $scope.loadingCharts = false;
@@ -517,14 +520,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         result.push( [ parseFloat(historicalDates[i]), parseFloat(historicalPrices[i]) ] );
       }
       result = result.reverse()
-      Highcharts.stockChart('historicalChart', 
-      {
-        chart: {
-            height: 400
-        },
-        rangeSelector: {
-          allButtonsEnabled: true,
-          buttons: [
+
+      var buttons = [
           {
               type: 'week',
               count: 1,
@@ -586,7 +583,65 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
                   forced: true,
                   units: [['month', [1]]]
               }
-          }],
+          }];
+      if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        buttons = [
+          {
+              type: 'month',
+              count: 1,
+              text: '1m',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          }, 
+          {
+              type: 'month',
+              count: 3,
+              text: '3m',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          }, 
+          {
+              type: 'month',
+              count: 6,
+              text: '6m',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          },
+          {
+              type: 'year',
+              count: 1,
+              text: '1y',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          },
+          {
+              type: 'all',
+              text: 'All',
+              dataGrouping: {
+                  forced: true,
+                  units: [['month', [1]]]
+              }
+          }];
+      }
+
+
+      Highcharts.stockChart('historicalChart', 
+      {
+        chart: {
+            height: 400,
+            width:null
+        },
+        rangeSelector: {
+          allButtonsEnabled: true,
+          buttons: buttons,
           selected: 0
         },
         title: {
@@ -640,7 +695,11 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         method: 'feed',
         link: url,
       }, function(response){
-
+        if (response && !response.error_message) {
+          alert('Posted Successfully');
+        } else {
+          alert('Not Posted');
+        }
       });
 
     })

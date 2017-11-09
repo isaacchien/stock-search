@@ -237,7 +237,7 @@
 	        	<div class="container">
 	        	<div class="row" style="font-weight: bold;position: relative; margin-bottom:20px">
 	        		<div class="col-sm-1">
-							  <label for="sortBy">Sort by</label>
+							  <label for="sortBy" style="white-space: nowrap;">Sort by</label>
 							</div>
 							<div class="form-group col-sm-2">
 							  <select ng-options="sorting as sorting for sorting in sortings" class="form-control" id="sortBy" ng-model="sortBy" ng-change="ctrl.sort(sortBy, order)" >
@@ -280,16 +280,17 @@
 	    <div ng-switch-when="right" class="my-switch-animation-right" >
 	      <div class="panel panel-default" style="padding:15px 30px; position:relative;">
 	        <div class="panel-heading row " style="position: relative; height: 55px; text-align:center;">
-    				<span class="col" style="display:inline;font-weight: bold;font-size: 14px;position: absolute;top: 20px;">Stock Detail</span>
-  					<div class="col" style="display:inline; position:absolute; right:10px;">
+  					<div style="font-weight: bold;font-size: 14px;position: absolute;">
 							<button class="btn btn-default" ng-click="ctrl.showFavorites()"><span class="glyphicon glyphicon-chevron-left"></span></button>
 	        	</div>
+
+    				<span style="display:inline;font-weight: bold;font-size: 14px;position: absolute;top: 20px;left: 43%;">Stock Details</span>
 	        </div>
 	        <div class="panel-body">
-					  <ul class="nav nav-pills">
-					    <li class="active"><a data-toggle="pill" href="#current"><span class="glyphicon glyphicon-time"></span>Current Stock</a></li>
-					    <li><a data-toggle="pill" href="#historical"><span class="glyphicon glyphicon-stats"></span>Historical Charts</a></li>
-					    <li><a data-toggle="pill" href="#news"><span class="glyphicon glyphicon-link"></span>News Feed</a></li>
+					  <ul class="nav nav-pills row">
+					    <li class="active"><a data-toggle="pill" href="#current"><span class="glyphicon glyphicon-time"></span><span class="hidden-xs">Current</span> Stock</a></li>
+					    <li><a data-toggle="pill" href="#historical"><span class="glyphicon glyphicon-stats"></span><span class="hidden-xs">Historical</span> Charts</a></li>
+					    <li><a data-toggle="pill" href="#news"><span class="glyphicon glyphicon-link"></span>News <span class="hidden-xs">Feed</span></a></li>
 					  </ul>
 						<hr>
 						<div class='tab-content'>
