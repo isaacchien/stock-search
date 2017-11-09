@@ -123,9 +123,14 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     }
   }
   function makePriceChart(prices, volumes, dates) {
+    var dates = dates.map(function(x){
+      var date = new Date(x)
+      return ( (date.getMonth() + 1) + "/" + (date.getDay() + 1))
+    })
     Highcharts.chart('Price-Chart', {
       chart: {
-        type: 'area'
+        type: 'area',
+        zoomType: 'x'
       },
       title: {
         text: "Stock Price and Volume"
@@ -264,18 +269,27 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       var parser = new DOMParser();
       var xmlDoc = parser.parseFromString(response.data,"text/xml");
 
-      for (var i = 0; i < 5; i++){
-        var title = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("title")[0].childNodes[0].nodeValue
-        var author = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("sa:author_name")[0].childNodes[0].nodeValue
-        var link = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("link")[0].childNodes[0].nodeValue
-        var pubDate = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("pubDate")[0].childNodes[0].nodeValue
-        $scope.news.push({
-          "title": title,
-          "author": author,
-          "link": link,
-          "pubDate": pubDate
-        })
+      if (xmlDoc.getElementsByTagName("channel").length > 0){
+        for (var i = 0; i < 5; i++){
+          var title = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("title")[0].childNodes[0].nodeValue
+          var author = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("sa:author_name")[0].childNodes[0].nodeValue
+          var link = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("link")[0].childNodes[0].nodeValue
+          var pubDate = xmlDoc.getElementsByTagName("item")[i].getElementsByTagName("pubDate")[0].childNodes[0].nodeValue
+          $scope.news.push({
+            "title": title,
+            "author": author,
+            "link": link,
+            "pubDate": pubDate
+          })
+        }
       }
+
+      $log.info("ERROR NEWS: " + $scope.news.length)
+
+      if ($scope.news.length === 0) {
+        $scope.error["News"] = true
+      }
+
       $scope.loadingNews = false;
       return response.data;
     });
@@ -288,12 +302,26 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.loadingHistorical = true;
     $scope.loadingNews = true;
 
+    $scope.error = {
+      'Price': false,
+      'SMA': false,
+      'EMA': false,
+      'STOCH': false,
+      'RSI': false,
+      'ADX': false,
+      'CCI': false,
+      'BBANDS': false,
+      'MACD': false,
+      'News': false
+    }
+
+    $scope.symbol = symbol.toUpperCase()
     $http({
       url: BACKEND_URL + "/price/" + symbol,
       method: "GET",
     })
     .then(function(response) {
-      self.showDetail(response)
+      self.showDetail(response, symbol)
 
       setNews(symbol);
           
@@ -336,106 +364,124 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       method:"GET"
     })
     .then(function(response) {
-      var data = response.data["Technical Analysis: " + indicator]
-      var dates = Object.keys(data).slice(0,112)
-      var keys = Object.keys(data[dates[0]])
+      if (Object.keys(response.data).length === 0) {
+        $scope.error[indicator] = true;
+      } else {
+        var data = response.data["Technical Analysis: " + indicator]
+        var dates = Object.keys(data).slice(0,112)
+        var keys = Object.keys(data[dates[0]])
 
-      var series = []
-      for (var i in keys) {
-        var key = keys[i]
-        var name = symbol + " " + key
-        var values = Object.values(Object.values(data).slice(0,112)).map(function(value){
-          return parseFloat(value[key])
-        })
-        series.push({
-          "name": name,
-          "data": values
-        })
-      }
-
-      var title = {
-         text: response.data["Meta Data"]["2: Indicator"]
-      };
-      var subtitle = {
-        text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
-        style: {
-          color: '#4286f4'
-        }            
-      };
-      var xAxis = {
-         categories: dates,
-         tickInterval: 5,
-         reversed:true
+        var series = []
+        for (var i in keys) {
+          var key = keys[i]
+          var name = symbol + " " + key
+          var values = Object.values(Object.values(data).slice(0,112)).map(function(value){
+            return parseFloat(value[key])
+          })
+          series.push({
+            "name": name,
+            "data": values
+          })
+        }
+        var chart = {
+          zoomType: 'x'
+        }
+        var title = {
+           text: response.data["Meta Data"]["2: Indicator"]
         };
-      var yAxis = {
-         title: {
-          text: indicator
-         }
-      };   
-      var json = {};
-      json.title = title;
-      json.subtitle = subtitle;
-      json.xAxis = xAxis;
-      json.yAxis = yAxis;
-      json.series = series;
-      Highcharts.chart(indicator + '-Chart', json);
+        var subtitle = {
+          text: '<a target="_blank" id="source-link" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+          style: {
+            color: '#4286f4'
+          }            
+        };
+        dates = dates.map(function(x){
+          var date = new Date(x)
+          return ( (date.getMonth() + 1) + "/" + (date.getDay() + 1))
+        })
+        var xAxis = {
+           categories: dates,
+           tickInterval: 5,
+           reversed:true
+          };
+        var yAxis = {
+           title: {
+            text: indicator
+           }
+        };   
+        var json = {};
+        json.chart = chart;
+        json.title = title;
+        json.subtitle = subtitle;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.series = series;
+        Highcharts.chart(indicator + '-Chart', json);
 
-      return response.data
+        return response.data
+
+      }
 
     });
   }
   self.showDetail = function(response) {
     $scope.view.slide='right'
+    if (Object.keys(response.data).length === 0) {
+      $scope.error["Price"] = true;
+      $scope.loadingCharts = false;
+      $scope.loadingDetail = false;
+      $scope.loadingHistorical = false;
 
-    var metadata = response.data["Meta Data"]
-    var timeseries = response.data["Time Series (Daily)"]
-    var historicalDates = Object.keys(timeseries).slice(0, 1000)
-    var dates = historicalDates.slice(0, 112)
-    var prices = dates.map(function(date){
-      return timeseries[date]["4. close"]
-    })
-    var historicalPrices = historicalDates.map(function(date){
-      return parseFloat(timeseries[date]["4. close"])
-    })
+    } else {
+      var metadata = response.data["Meta Data"]
+      var timeseries = response.data["Time Series (Daily)"]
+      var historicalDates = Object.keys(timeseries).slice(0, 1000)
+      var dates = historicalDates.slice(0, 112)
+      var prices = dates.map(function(date){
+        return timeseries[date]["4. close"]
+      })
+      var historicalPrices = historicalDates.map(function(date){
+        return parseFloat(timeseries[date]["4. close"])
+      })
 
-    var volumes = dates.map(function(date){
-      return timeseries[date]["5. volume"]
-    })
-    var today = timeseries[dates[0]]
-    var yesterday = timeseries[dates[1]]
+      var volumes = dates.map(function(date){
+        return timeseries[date]["5. volume"]
+      })
+      var today = timeseries[dates[0]]
+      var yesterday = timeseries[dates[1]]
 
-    // fields where trading hours don't matter
-    $scope.symbol = metadata["2. Symbol"].toUpperCase()
-    $scope.change = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
-    $scope.changePercent = ($scope.change / yesterday["4. close"] * 100).toFixed(2)
-    $scope.open = Number(today["1. open"]).toFixed(2)
-    $scope.timestamp = metadata["3. Last Refreshed"]
-    $scope.range = Number(today["3. low"]).toFixed(2) + " - " + Number(today["2. high"]).toFixed(2)
-    $scope.volume = today["5. volume"]
-    $scope.lastPrice = Number(today["4. close"]).toFixed(2)
+      // fields where trading hours don't matter
+      $scope.change = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
+      $scope.changePercent = ($scope.change / yesterday["4. close"] * 100).toFixed(2)
+      $scope.open = Number(today["1. open"]).toFixed(2)
+      $scope.timestamp = metadata["3. Last Refreshed"]
+      $scope.range = Number(today["3. low"]).toFixed(2) + " - " + Number(today["2. high"]).toFixed(2)
+      $scope.volume = today["5. volume"]
+      $scope.lastPrice = Number(today["4. close"]).toFixed(2)
 
-    $scope.loadingDetail = false;
-    Date.prototype.stdTimezoneOffset = function() {
-        var jan = new Date(this.getFullYear(), 0, 1);
-        var jul = new Date(this.getFullYear(), 6, 1);
-        return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+      $scope.loadingDetail = false;
+      Date.prototype.stdTimezoneOffset = function() {
+          var jan = new Date(this.getFullYear(), 0, 1);
+          var jul = new Date(this.getFullYear(), 6, 1);
+          return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+      }
+
+      Date.prototype.dst = function() {
+          return this.getTimezoneOffset() < this.stdTimezoneOffset();
+      }
+
+      var isDST = new Date();
+      if (isDST.dst()) { $scope.timestamp += " EDT"} else { $scope.timestamp += " EST"}
+
+      prices = prices.map(function(x){
+        return parseFloat(x)
+      })
+      volumes = volumes.map(function(x){
+        return parseFloat(x)
+      })
+      // fields where trading hours matter
+      $scope.close = Number(today["4. close"]).toFixed(2)  
     }
-
-    Date.prototype.dst = function() {
-        return this.getTimezoneOffset() < this.stdTimezoneOffset();
-    }
-
-    var isDST = new Date();
-    if (isDST.dst()) { $scope.timestamp += " EDT"} else { $scope.timestamp += " EST"}
-
-    prices = prices.map(function(x){
-      return parseFloat(x)
-    })
-    volumes = volumes.map(function(x){
-      return parseFloat(x)
-    })
-    // fields where trading hours matter
-    $scope.close = Number(today["4. close"]).toFixed(2)  
     $timeout(function() {
       // inject favorite star
       var isFavorite = false;
@@ -451,17 +497,9 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       }
 
       // inject chart
-      makePriceChart(prices, volumes, dates)
-
-
-      // makeSMA($scope.symbol)
-      // makeEMA($scope.symbol)
-      // makeRSI($scope.symbol)
-      // makeADX($scope.symbol)
-      // makeCCI($scope.symbol)
-      // makeSTOCH($scope.symbol)
-      // makeBBANDS($scope.symbol)
-      // makeMACD($scope.symbol)
+      if (!$scope.error['Price']){
+        makePriceChart(prices, volumes, dates)
+      }
 
       var indicators = ["SMA", "EMA", "RSI", "ADX", "CCI", "STOCH", "BBANDS", "MACD"]
 
@@ -469,6 +507,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         makeIndicatorChart(indicators[i], $scope.symbol)
       }
       $scope.loadingCharts = false;
+
+      if (Object.keys(response.data).length !== 0) {
       historicalDates = historicalDates.map(function(data){
         return new Date(data).getTime()
       })
@@ -574,10 +614,11 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
         }]
       });
 
-
-
       $scope.loadingHistorical = false;
+      }
     })  
+
+    
   }
 
   self.shareFacebook = function() {
