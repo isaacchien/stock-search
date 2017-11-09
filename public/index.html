@@ -187,7 +187,7 @@
 						</md-autocomplete>
 						<span ng-show="autocompleteForm.autocomplete.$invalid && autocompleteForm.autocomplete.$touched" style="position:absolute;" class="help-block">Please enter a stock ticker symbol.</span>
 					</div>
-					<div class="col-md-3" style="margin-top:40px;">
+					<div class="col-md-3" style="margin-top: 24px;">
 						<button type="button" class="btn btn-primary" ng-disabled="autocompleteForm.$invalid" ng-click="ctrl.getQuote(ctrl.searchText)">
 							<span class="glyphicon glyphicon-search"></span> Get Quote
 						</button>
@@ -296,15 +296,18 @@
 	        	<div class="tab-pane in active" id="current">
 		        	<div class="row">
 			        	<div class="col-md-6">
-						  		<table class="table table-striped col">
-						  			<div class="row" style="padding-bottom:10px">
-						        	<span style="font-weight:bold;position: absolute;left: 20px;" class="col">Stock Details</span>
-											<button type="button" ng-click="ctrl.shareFacebook()" class="btn btn-default col" style="float:right;height:40px;width:40px;margin-right: 30px;margin-left: 10px;"><img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" style="height: 25px;position: relative;right: 5px;"></button>
+					  			<div class="row" style="padding-bottom:10px">
+					        	<span style="font-weight:bold;position: absolute;left: 20px;" class="col">Stock Details</span>
+										<button type="button" ng-click="ctrl.shareFacebook()" class="btn btn-default col" style="float:right;height:40px;width:40px;margin-right: 30px;margin-left: 10px;"><img src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png" style="height: 25px;position: relative;right: 5px;"></button>
 
-											<button type="button" class="btn btn-default col" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)" style="float:right;height:40px; width:40px;"></button>
+										<button type="button" class="btn btn-default col" ng-bind-html="star" ng-click="ctrl.updateFavorites(symbol)" style="float:right;height:40px; width:40px;"></button>
 
-										</div>
-							      <tr>
+									</div>
+									<div class="progress" ng-show="loadingDetail">
+  										<div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
+									</div>	
+						  		<table class="table table-striped col" ng-hide="loadingDetail">						      
+										<tr>
 							        <th>Stock Ticker Symbol</th>
 							        <td>{{symbol}}</td>
 							      </tr>
@@ -354,26 +357,34 @@
 									  <li><a data-toggle="tab" href="#BBANDS-Chart">BBANDS</a></li>
 									  <li><a data-toggle="tab" href="#MACD-Chart">MACD</a></li>
 									</ul>
-
 									<div class="tab-content">
-									  <div id="Price-Chart" class="tab-pane in active"></div>
-									  <div id="SMA-Chart" class="tab-pane in "></div>
-									  <div id="EMA-Chart" class="tab-pane in "></div>
-									  <div id="STOCH-Chart" class="tab-pane in "></div>
-									  <div id="RSI-Chart" class="tab-pane in "></div>
-									  <div id="ADX-Chart" class="tab-pane in "></div>
-									  <div id="CCI-Chart" class="tab-pane in "></div>
-									  <div id="BBANDS-Chart" class="tab-pane in "></div>
-									  <div id="MACD-Chart" class="tab-pane in "></div>
+										<div class="progress" ng-show="loadingCharts">
+	  										<div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
+										</div>
+									  <div id="Price-Chart" ng-hide="loadingCharts" class="tab-pane in active"></div>
+									  <div id="SMA-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="EMA-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="STOCH-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="RSI-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="ADX-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="CCI-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="BBANDS-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
+									  <div id="MACD-Chart" ng-hide="loadingCharts" class="tab-pane in "></div>
 								  </div>
 							  </div>
 						  </div>
 					  </div>
 					  <div class="tab-pane in" id="historical">
-					  	<div id="historicalChart"></div>
+							<div class="progress" ng-show="loadingHistorical">
+								<div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
+							</div>	
+					  	<div id="historicalChart" ng-hide="loadingHistorical"></div>
 					  </div>
 					  <div class="tab-pane in" id="news">
-							<div ng-repeat="n in news track by $index">
+							<div class="progress" ng-show="loadingNews">
+								<div class="progress-bar progress-bar-striped progress-bar-animated active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
+							</div>	
+							<div ng-repeat="n in news track by $index" ng-hide="loadingNews">
 							  <div class="well well-lg" >
 							  	<a target="_blank" href={{n.link}} style="font-size:18px">{{n.title}}</a><br><br>
 							  	<strong>{{n.author}}</strong><br><br>

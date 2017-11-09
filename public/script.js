@@ -27,6 +27,7 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
   }
   function getStockPrice(stock){
+
     $http
     .get(BACKEND_URL + "/price/" + stock.symbol)
     .then(function(response){
@@ -275,13 +276,18 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
           "pubDate": pubDate
         })
       }
-
+      $scope.loadingNews = false;
       return response.data;
     });
 
   }
 
   self.getQuote = function(symbol) {
+    $scope.loadingCharts = true;
+    $scope.loadingDetail = true;
+    $scope.loadingHistorical = true;
+    $scope.loadingNews = true;
+
     $http({
       url: BACKEND_URL + "/price/" + symbol,
       method: "GET",
@@ -383,10 +389,15 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
 
     var metadata = response.data["Meta Data"]
     var timeseries = response.data["Time Series (Daily)"]
-    var dates = Object.keys(timeseries).slice(0, 112)
+    var historicalDates = Object.keys(timeseries).slice(0, 1000)
+    var dates = historicalDates.slice(0, 112)
     var prices = dates.map(function(date){
       return timeseries[date]["4. close"]
     })
+    var historicalPrices = historicalDates.map(function(date){
+      return parseFloat(timeseries[date]["4. close"])
+    })
+
     var volumes = dates.map(function(date){
       return timeseries[date]["5. volume"]
     })
@@ -402,6 +413,8 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
     $scope.range = Number(today["3. low"]).toFixed(2) + " - " + Number(today["2. high"]).toFixed(2)
     $scope.volume = today["5. volume"]
     $scope.lastPrice = Number(today["4. close"]).toFixed(2)
+
+    $scope.loadingDetail = false;
     Date.prototype.stdTimezoneOffset = function() {
         var jan = new Date(this.getFullYear(), 0, 1);
         var jul = new Date(this.getFullYear(), 6, 1);
@@ -455,55 +468,115 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       for (i in indicators){
         makeIndicatorChart(indicators[i], $scope.symbol)
       }
+      $scope.loadingCharts = false;
+      historicalDates = historicalDates.map(function(data){
+        return new Date(data).getTime()
+      })
 
-      Highcharts.stockChart('historicalChart', {
+      var result = [], i = -1;
+      while ( historicalDates[++i] ) { 
+        result.push( [ parseFloat(historicalDates[i]), parseFloat(historicalPrices[i]) ] );
+      }
+      result = result.reverse()
+      $log.info(historicalDates)
+      $log.info(historicalPrices)
+      $log.info(result)
 
+      Highcharts.stockChart('historicalChart', 
+      {
         chart: {
-            height: 400,
-            width:null
+            height: 400
         },
-
-        title: {
-            text: 'Highstock Responsive Chart'
-        },
-
-        subtitle: {
-            text: 'Click small/large buttons or change window size to test responsiveness'
-        },
-
         rangeSelector: {
-            selected: 1
-        },
-
-        series: [{
-            name: $scope.symbol,
-            data: prices,
-            type: 'area',
-            threshold: null,
-            tooltip: {
-                valueDecimals: 2
-            }
-        }],
-
-        responsive: {
-          rules: [{
-              condition: {
-                  maxWidth: 500
-              },
-              chartOptions: {
-                  chart: {
-                      height: 300
-                  },
-                  subtitle: {
-                      text: null
-                  },
-                  navigator: {
-                      enabled: false
-                  }
+          allButtonsEnabled: true,
+          buttons: [
+          {
+              type: 'week',
+              count: 1,
+              text: '1w',
+              dataGrouping: {
+                  forced: true,
+                  units: [['day', [1]]]
               }
-          }]
-        }
+          },  
+          {
+              type: 'month',
+              count: 1,
+              text: '1m',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          }, 
+          {
+              type: 'month',
+              count: 3,
+              text: '3m',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          }, 
+          {
+              type: 'month',
+              count: 6,
+              text: '6m',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          },
+          {
+              type: 'year',
+              count: 1,
+              text: 'YTD',
+              dataGrouping: {
+                  forced: true,
+                  units: [['month', [1]]]
+              }
+          },
+          {
+              type: 'year',
+              count: 1,
+              text: '1y',
+              dataGrouping: {
+                  forced: true,
+                  units: [['week', [1]]]
+              }
+          },
+          {
+              type: 'all',
+              text: 'All',
+              dataGrouping: {
+                  forced: true,
+                  units: [['month', [1]]]
+              }
+          }],
+          selected: 0
+        },
+        title: {
+          text: $scope.symbol +' Stock Value'
+        },
+        subtitle: {
+          text:'<a target="_blank" href="https://www.alphavantage.co/">Source: Alpha Vantage</a>',
+          style:{
+            color:'blue'
+          },
+          useHTML:true
+        },
+        series: [{
+          name: $scope.symbol,
+          data: result,
+          type:"area",
+          tooltip: {
+              valueDecimals: 2
+          }
+        }]
       });
+
+
+
+      $scope.loadingHistorical = false;
     })  
   }
 

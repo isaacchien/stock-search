@@ -22,7 +22,7 @@ app.get('/price/:symbol', function (req, res) {
 	var symbol = req.params['symbol'];
 
 	var price; 
-  var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=M2E9XXHLFH4GPHF2"
+  var url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + symbol + "&outputsize=full&apikey=M2E9XXHLFH4GPHF2"
 	request(url, function (error, response, body) {
 
 		if (body.includes("Error")){
