@@ -128,7 +128,6 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       var date = new Date(x)
       return ( (date.getMonth() + 1) + "/" + (date.getDate() + 1))
     })
-    $log.info(dates)
 
     Highcharts.chart('Price-Chart', {
       chart: {
@@ -452,11 +451,25 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       var today = timeseries[dates[0]]
       var yesterday = timeseries[dates[1]]
 
+
+
+
+
+
       // fields where trading hours don't matter
       $scope.change = Number(today["4. close"] - yesterday["4. close"]).toFixed(2)
       $scope.changePercent = ($scope.change / yesterday["4. close"] * 100).toFixed(2)
       $scope.open = Number(today["1. open"]).toFixed(2)
       $scope.timestamp = metadata["3. Last Refreshed"]
+
+
+      var splittime = $scope.timestamp.split(/[ ,]+/);
+      if(splittime.length == 1){
+        $scope.timestamp += " 16:00:00 "
+      }
+
+
+
       $scope.range = Number(today["3. low"]).toFixed(2) + " - " + Number(today["2. high"]).toFixed(2)
       $scope.volume = today["5. volume"]
       $scope.lastPrice = Number(today["4. close"]).toFixed(2)
@@ -682,15 +695,13 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       type: 'image/png',
       async: true
     };
-    var exportUrl = 'http://export.highcharts.com/';
 
     $http({
-      url: exportUrl,
-      method:"POST",
-      data: data
+      url: BACKEND_URL + "/export",
+      method:"GET",
+      params: {data: data}
     }).then(function(response){
-      var url = exportUrl + "/"+response.data
-
+      var url = 'https://export.highcharts.com/' +response.data
       FB.ui({
         method: 'feed',
         link: url,

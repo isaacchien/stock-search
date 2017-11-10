@@ -70,6 +70,19 @@ app.get('/indicator/:indicator/:symbol', function (req, res) {
 	})
 })
 
+app.get('/export', function(req, res) {
+	var data = JSON.parse(req.query.data)
+	var exportUrl = 'https://export.highcharts.com/';
+	console.log(data)
+	request({
+	  url: exportUrl,
+	  method: "POST",
+	  json: data
+	}, function(error, response, body){
+	  res.send(body)
+	});
+});
+
 app.listen(8080, function () {
   console.log('Example app listening on port 8080!')
 })
