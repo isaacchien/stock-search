@@ -1,5 +1,5 @@
 
-var BACKEND_URL = "http://localhost:8080"
+var BACKEND_URL = "https://stock-search-185322.appspot.com"
 
 var app = angular
   .module('stockSearch', ['ngMaterial', 'ngMessages', 'ngAnimate', 'ngSanitize'])
