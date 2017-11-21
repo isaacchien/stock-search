@@ -696,12 +696,15 @@ function stockSearchController ($timeout, $q, $log, $http, $scope) {
       async: true
     };
 
+    var exportUrl = 'https://export.highcharts.com/';
+
     $http({
-      url: BACKEND_URL + "/export",
-      method:"GET",
-      params: {data: data}
+      url: exportUrl,
+      method:"POST",
+      data: data
     }).then(function(response){
-      var url = 'https://export.highcharts.com/' +response.data
+      var url = 'https://export.highcharts.com/' + response.data
+      $log.info(url)
       FB.ui({
         method: 'feed',
         link: url,
