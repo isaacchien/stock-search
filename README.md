@@ -5,5 +5,8 @@
 * Keep a list of favorite stocks
 * Share to facebook
 
-Front-end: AngularJS, HighCharts
-Back-end: Node.js, AlphaVantage API, SeekingAlpha API
+### Front-end
+AngularJS, HighCharts
+
+### Back-end
+Node.js, AlphaVantage, SeekingAlpha
